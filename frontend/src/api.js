@@ -19,4 +19,15 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+/*
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 401) {
+      // e.g., redirect to login, or clear store
+    }
+    return Promise.reject(err);
+  }
+);*/
+
 export default api;

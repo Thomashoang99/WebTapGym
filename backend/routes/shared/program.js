@@ -1,0 +1,116 @@
+const express = require('express');
+const router  = express.Router();
+const Program = require('../../models/Program');
+const Purchase = require('../../models/Purchase');
+const optionalAuth = require('../../middleware/optionalAuth');
+
+const parseValues = str => str.split(',').map(s => s.trim());
+
+router.get('/', optionalAuth, async (req, res) => {
+  try {
+    // 1) Extract query params
+    let {
+      keywords,
+      difficulty,
+      durationMin,
+      durationMax,
+      isPaid,
+      priceMin,
+      priceMax,
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
+    // 2) Build Mongo filter
+    const filter = {};
+
+    if (keywords) {
+      const kw = parseValues(keywords);
+      filter.$and = kw.map(k => ({
+        $or: [
+          { name:        { $regex: k, $options: 'i' } },
+          { description: { $regex: k, $options: 'i' } }
+        ]
+      }));
+    }
+
+    if (difficulty) {
+      filter.difficulty = { $in: parseValues(difficulty) };
+    }
+
+    if (durationMin || durationMax) {
+      filter.duration = {};
+      if (durationMin) filter.duration.$gte = parseInt(durationMin, 10);
+      if (durationMax) filter.duration.$lte = parseInt(durationMax, 10);
+    }
+
+    if (typeof isPaid !== 'undefined') {
+      filter.isPaid = (isPaid === 'true');
+    }
+
+    if (priceMin || priceMax) {
+      filter.price = {};
+      if (priceMin) filter.price.$gte = parseFloat(priceMin);
+      if (priceMax) filter.price.$lte = parseFloat(priceMax);
+    }
+
+    // 3) Pagination & sorting
+    page  = parseInt(page, 10);
+    limit = Math.min(parseInt(limit, 10), 100);
+    const skip = (page - 1) * limit;
+    const dir  = sortOrder === 'asc' ? 1 : -1;
+    const validSortFields = ['name', 'createdAt', 'duration', 'price'];
+    const sortField = validSortFields.includes(sortBy) ? sortBy : 'createdAt';
+
+    // 4) Query programs
+    const total    = await Program.countDocuments(filter);
+    const programs = await Program.find(filter)
+      .sort({ [sortField]: dir, _id: dir })
+      .skip(skip)
+      .limit(limit);
+
+    // 5) Determine which of these the user has purchased (if logged in)
+    let purchasedSet = new Set();
+    if (req.user && req.user._id) {
+      const purchases = await Purchase.find({
+        user:    req.user._id,
+        program: { $in: programs.map(p => p._id) }
+      }).select('program');
+      purchasedSet = new Set(purchases.map(p => p.program.toString()));
+    }
+
+    // 6) Attach `purchased` flag
+    const resultsWithFlag = programs.map(prog => {
+      const obj = prog.toObject();
+      obj.purchased = purchasedSet.has(obj._id.toString());
+      return obj;
+    });
+
+    // 7) Send the response
+    res.json({
+      page,
+      totalPages: Math.ceil(total / limit),
+      count: total,
+      results: resultsWithFlag
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Can't retrieve programs" });
+  }
+});
+
+// GET single program
+router.get('/:id', async (req, res) => {
+  try {
+    const prog = await Program.findById(req.params.id).populate('exercises.exercise');
+    if (!prog) return res.status(404).json({ error: 'Program not found' });
+    res.json(prog);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Can't retrieve program" });
+  }
+});
+
+module.exports = router;

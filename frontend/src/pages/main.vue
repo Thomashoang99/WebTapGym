@@ -23,6 +23,7 @@ import NavBar from '../components/navbar.vue';
 
 .content-area {
     position: fixed;
+    width: 100vw;
     top: 8vh;
     bottom: 0;
     overflow-y: scroll;

@@ -99,7 +99,7 @@ const seedExercises = async () => {
   ];
 
   await Exercise.insertMany(exercises);
-  console.log('Đã thêm dữ liêu bài tập');
+  console.log('Exercise data seeded!');
 };
 
 module.exports = seedExercises;

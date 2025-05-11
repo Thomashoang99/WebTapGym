@@ -15,7 +15,10 @@
         
         <button type="submit" @click="handleLogin">Đăng nhập</button>
         <p v-if="error" class="error">{{ error }}</p>
-        <p class="registerPrompt">Chưa có tài khoản? <router-link to="./register">Đăng ký</router-link></p>
+        <div class="optional">
+          <p class="prompt">Chưa có tài khoản? <router-link to="./register">Đăng ký</router-link></p>
+          <p class="prompt"><router-link to="./password-recovery">Đổi mật khẩu</router-link></p>
+        </div>
         </form>
     </div>
 </template>
@@ -101,19 +104,19 @@
     margin-top: 1rem;
   }
 
-  .registerPrompt{
-    margin-top: 1rem;
-    text-align: center;
+  .optional {
+    display: flex;
+    justify-content: space-between;
   }
 
-  .registerPrompt a{
+  .prompt a{
     all: unset;
     color: var(--accent-secondary);
     text-decoration: underline;
     cursor: pointer;
   }
 
-  .registerPrompt a:active{
+  .prompt a:active{
     color: var(--accent-primary);
   }
 </style>

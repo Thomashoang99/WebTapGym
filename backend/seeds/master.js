@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const seedUsers = require('./users');
 const seedExercises = require('./exercises');
+const seedPrograms = require('./programs');
+
 require('dotenv').config();
 
 const runSeeds = async () => {
@@ -9,14 +11,15 @@ const runSeeds = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('Đã kết nối CSDL.');
+    console.log('DB connected');
 
     await seedUsers();
     await seedExercises();
+    await seedPrograms();
 
-    console.log('Đã thêm dữ liệu mẫu thành công.');
+    console.log('All data seeded successfully!');
   } catch (err) {
-    console.error('Lỗi: ', err);
+    console.error('Error: ', err);
   } finally {
     await mongoose.disconnect();
   }

@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Không thể lấy được dữ liệu bài tập' });
+    res.status(500).json({ error: 'Can\'t retrieve exercises' });
   }
 });
 

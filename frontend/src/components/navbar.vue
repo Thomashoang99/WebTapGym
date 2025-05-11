@@ -4,11 +4,11 @@
         <h1>THE GYM SITE</h1>
     </div>
     <div class="nav-links">
-        <router-link class="nav-link button-primary" to="/">Home</router-link>
-        <router-link class="nav-link button-primary" to="/">Articles</router-link>
-        <router-link class="nav-link button-primary" to="/">Exercises</router-link>
-        <router-link class="nav-link button-primary" to="/">Programs</router-link>
-        <router-link v-if="authStore.isLoggedIn" class="nav-link button-primary" to="/">Favorites</router-link>
+        <router-link class="nav-link button-primary" to="/home">Home</router-link>
+        <router-link class="nav-link button-primary" to="/articles">Articles</router-link>
+        <router-link class="nav-link button-primary" to="/exercises">Exercises</router-link>
+        <router-link class="nav-link button-primary" to="/programs">Programs</router-link>
+        <router-link v-if="authStore.isLoggedIn" class="nav-link button-primary" to="/bookmarks">Favorites</router-link>
         <router-link v-if="!authStore.isLoggedIn" class="nav-link button-primary" to="/login">Login</router-link>
         <button v-else class="nav-link button-primary" @click="onLogout">Logout</button>
     </div>
@@ -96,6 +96,15 @@ nav>*{
 
 .nav-link:hover::after {
   transform: translateX(-50%) scaleX(1);
+}
+
+.nav-link.router-link-active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nav-link.router-link-active {
+  font-weight: bold;
+  color: var(--text-primary);
 }
 
 @media (max-width: 768px) {

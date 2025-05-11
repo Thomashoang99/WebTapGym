@@ -75,3 +75,18 @@ h1, h2, h3, h4, h5, h6 {
 .text-success {
   color: #06D6A0;
 }
+
+
+.filter-bar h2 {
+  margin-bottom: 12px;
+}
+
+.filter-option {
+  margin-bottom: 0.25rem;
+}
+
+.filter-select {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 4px;
+}

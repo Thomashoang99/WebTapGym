@@ -1,8 +1,9 @@
 const express = require('express');
+const { hash, compare } = require('bcryptjs');
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-
+const auth = require('../../middleware/auth');
 
 // Đăng ký
 router.post('/register', async (req, res) => {
@@ -42,6 +43,30 @@ router.post('/login', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json('Đăng nhập thất bại');
+  }
+});
+
+// Đổi mật khẩu
+router.patch('/reset-password', async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(400).json({ message: 'Invalid email address' });
+
+    const isSamePassword = await user.matchPassword(newPassword);
+    if (isSamePassword)
+      return res.status(400).json({ message: 'New password must be different from the old one' });
+
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successful' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Password reset failed' });
   }
 });
 

@@ -1,25 +1,26 @@
 <template>
   <div class="container">
-    <h2>ĐĂNG KÝ</h2>
+    <h2>LẤY LẠI MẬT KHẨU</h2>
     <form @submit.prevent="handleRegister">
       <div class="input-group">
-        <label>Tên người dùng:</label>
-        <input v-model="username" placeholder="Nhập tên người dùng..." type="text" required />
+        <label>Địa chỉ email:</label>
+        <input v-model="email" placeholder="Nhập tên người dùng..." type="text" required />
       </div>
 
-      <div class="input-group">
-        <label>Email:</label>
-        <input v-model="email" placeholder="Nhập địa chỉ email..." type="email" required />
-      </div>
 
       <div class="input-group">
         <label>Mật khẩu:</label>
         <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
       </div>
 
-      <button type="submit" @click="handleRegister">Đăng ký</button>
-      <p v-if="error" class="error">{{ error }}</p>
-      <p class="loginPrompt">Đã có tài khoản? <router-link to="./login">Đăng nhập</router-link></p>
+      <div class="input-group">
+        <label>Nhập lại mật khẩu:</label>
+        <input v-model="passwordReenter" placeholder="Nhập lại mật khẩu..." type="password" required />
+      </div>
+
+      <button type="submit" @click="handlePasswordChange">Đổi mật khẩu</button>
+      <span style="text-align: center; color: red" v-if="error">{{ error  }}</span>
+      <span style="text-align: center; color: cyan" v-if="success">{{ success  }}</span>
     </form>
   </div>
 </template>
@@ -27,25 +28,33 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-
-const username = ref('')
+import api from '../api';
 const email = ref('')
-const password = ref('')
-const error = ref('')
-const success = ref('');
+const password = ref(''); const passwordReenter = ref('')
+const error = ref(''); const success = ref('');
 const router = useRouter()
 
-const handleRegister = async () => {
+const handlePasswordChange = async () => {
   try {
-    await api.post('/user/auth/register', {
-      username: username.value,
-      email: email.value,
-      password: password.value,
-    })
-    success.value = 'Đăng ký người dùng thành công. Chuyển hướng về trang đăng nhập...'
-    setTimeout(() => router.post('/login'), 300);
+
+    if (password.value === passwordReenter.value)
+    {
+        await api.patch('/user/auth/reset-password', {
+            email: email.value,
+            newPassword: password.value,
+        })
+        error.value = '';
+        success.value = 'Đổi mật khẩu thành công';
+        setTimeout(() => router.push('/login'), 300);
+    }
+    else {
+        success.value = '';
+        error.value = "Mật khẩu không trùng khớp";
+        return;
+    }
   } catch (err) {
-    error.value = err.response?.data?.message || 'Đăng ký không thành công'
+    success.value = '';
+    error.value = err.response?.data?.message || "Đổi mật khẩu thất bại!";
     console.log(error.value)
   }
 } 

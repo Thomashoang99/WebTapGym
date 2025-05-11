@@ -39,4 +39,11 @@ export const useAuthStore = defineStore('auth', () => {
     token, user, isLoggedIn,
     login, logout, setUser
   };
+}, 
+{
+  persist: {
+    key: 'auth',
+    storage: sessionStorage,
+    paths: ['user', 'token'],
+  },
 });

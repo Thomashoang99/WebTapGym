@@ -34,7 +34,7 @@ const seedUsers = async () => {
       const u = new User(user);
       await u.save();
     }
-    console.log('Đã thêm user thành công');
+    console.log('User seeded!');
 };
 
 module.exports = seedUsers;
