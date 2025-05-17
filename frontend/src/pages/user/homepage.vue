@@ -1,7 +1,7 @@
 <template>
 <div class="homepage">
     <section class="hero-section">
-        <img src="../assets/banner.jpg">
+        <img src="../../assets/banner.jpg">
         <h1 class="hero-header">Unleash your potential</h1>
     </section>
     <section class="exercise-list" >
@@ -20,8 +20,8 @@
     
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import Card from '../components/card.vue';
-import api from '../api';
+import Card from '../../components/card.vue';
+import api from '../../api';
 
 const latestExercises = ref([]);
 const loaded = ref(false); 

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const seedUsers = require('./users');
 const seedExercises = require('./exercises');
 const seedPrograms = require('./programs');
+const resetPurchases = require('./purchases');
 
 require('dotenv').config();
 
@@ -13,6 +14,7 @@ const runSeeds = async () => {
     });
     console.log('DB connected');
 
+    await resetPurchases();
     await seedUsers();
     await seedExercises();
     await seedPrograms();

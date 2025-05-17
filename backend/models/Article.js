@@ -39,18 +39,17 @@ const ArticleSchema = new Schema({
     tags: {
         type: [String],
         set: tags => tags.map(tag => tag.trim().toLowerCase())
-    },
-    createdBy: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
     }
 }, { timestamps: true });
 
 // Add indexes for performance
-ArticleSchema.index({ title: 'text', tags: 'text'});
-ArticleSchema.index({ categories: 1 });
-ArticleSchema.index({ createdBy: 1 });
+ArticleSchema.index({
+  title:     'text',
+  content:   'text',
+  summary:   'text',
+  tags:      'text',
+  categories:'text'
+});
 
 const Article = model('Article', ArticleSchema);
 module.exports = Article;

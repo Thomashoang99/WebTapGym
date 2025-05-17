@@ -84,8 +84,8 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import api from '../api';
-import Card from '../components/card.vue';
+import api from '../../api';
+import Card from '../../components/card.vue';
 
 // Filter and sort options
 const bodyPartOptions = [
@@ -202,10 +202,13 @@ function nextPage() {
 .filter-bar {
   position: sticky;
   top: 0;
+  min-height: 100vh;
   align-self: flex-start;
   flex: 1;
   padding: 16px;
   border-right: 1px solid #ddd;
+  border-radius: 8px;
+  background: var(--background-secondary);
 }
 
 .result-grid {
@@ -226,7 +229,7 @@ function nextPage() {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 16px;
   width: 100%;
 }

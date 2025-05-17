@@ -7,9 +7,7 @@ const app = express();
 app.use(express.json()).use(cors());
 
 const routes = require('./routes'); 
-
 app.use('/api', routes); 
-
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
@@ -17,6 +15,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 
 app.get('/', (_, res) => res.send('GymSite API'));
+
 
 
 const port = process.env.PORT || 9000;

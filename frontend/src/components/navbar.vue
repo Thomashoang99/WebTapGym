@@ -8,7 +8,7 @@
         <router-link class="nav-link button-primary" to="/articles">Articles</router-link>
         <router-link class="nav-link button-primary" to="/exercises">Exercises</router-link>
         <router-link class="nav-link button-primary" to="/programs">Programs</router-link>
-        <router-link v-if="authStore.isLoggedIn" class="nav-link button-primary" to="/bookmarks">Favorites</router-link>
+        <router-link v-if="authStore.isLoggedIn" class="nav-link button-primary" to="/progress-tracking">Progress Tracker</router-link>
         <router-link v-if="!authStore.isLoggedIn" class="nav-link button-primary" to="/login">Login</router-link>
         <button v-else class="nav-link button-primary" @click="onLogout">Logout</button>
     </div>

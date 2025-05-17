@@ -1,0 +1,23 @@
+.env
+.env.*  # covers .env.development, .env.production, etc.
+
+/frontend/node_modules/
+/backend/node_modules/
+
+
+/frontend/dist/
+/backend/dist/
+
+*.log
+logs/
+
+.DS_Store
+Thumbs.db
+
+npm-debug.log*
+
+.vscode/
+
+coverage/
+
+/frontend/.vite/

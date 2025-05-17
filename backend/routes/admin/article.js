@@ -4,7 +4,7 @@ const Article = require('../../models/Article');
 const auth = require('../../middleware/auth');
 const isAdmin = require('../../middleware/admin');
 
-// Tạo bài đăng mới
+// Create new article
 router.post('/', auth, isAdmin, async (req, res) => {
   try {
     const { title, content, summary, imageUrl, categories, tags } = req.body;
@@ -15,7 +15,6 @@ router.post('/', auth, isAdmin, async (req, res) => {
       imageUrl,
       categories,
       tags,
-      createdBy: req.user._id
     });
     await article.save();
     res.status(201).json('Article created');
@@ -24,7 +23,7 @@ router.post('/', auth, isAdmin, async (req, res) => {
   }
 });
 
-// Sửa bài đăng
+// Modify an article
 router.put('/:id', auth, isAdmin, async (req, res) => {
   try {
     const article = await Article.findByIdAndUpdate(
@@ -32,21 +31,21 @@ router.put('/:id', auth, isAdmin, async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
-    if (!updated) return res.status(404).json('Không tìm thấy bài đăng');
-    res.status(200).json({ msg: 'Đã cập nhật'});
+    if (!updated) return res.status(404).json('Article not found');
+    res.status(200).json({ msg: 'Update complete'});
   } catch (err) {
-    res.status(400).json({ err: err.message || 'Không truy xuất được dữ liệu' });
+    res.status(400).json({ err: err.message || 'Server error' });
   }
 });
 
-// Xóa bài
+// Delete
 router.delete('/:id', auth, isAdmin, async (req, res) => {
   try {
     const article = await Article.findByIdAndDelete(req.params.id);
-    if (!article) return res.status(404).json('Không tìm thấy bài đăng');
-    res.status(200).json('Đã xóa bài đăng');
+    if (!article) return res.status(404).json('Article not found');
+    res.status(200).json('Delete complete');
   } catch (err) {
-    res.status(500).json('Lỗi không xóa được bài đăng');
+    res.status(500).json('Sercer error');
   }
 });
 

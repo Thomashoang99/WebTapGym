@@ -1,34 +1,36 @@
 <template>
-  <div class="container">
-    <h2>LẤY LẠI MẬT KHẨU</h2>
-    <form @submit.prevent="handleRegister">
-      <div class="input-group">
-        <label>Địa chỉ email:</label>
-        <input v-model="email" placeholder="Nhập tên người dùng..." type="text" required />
-      </div>
+  <div class="wrapper">
+    <div class="container">
+      <h2>LẤY LẠI MẬT KHẨU</h2>
+      <form @submit.prevent="handlePasswordChange">
+        <div class="input-group">
+          <label>Địa chỉ email:</label>
+          <input v-model="email" placeholder="Nhập tên người dùng..." type="text" required />
+        </div>
 
 
-      <div class="input-group">
-        <label>Mật khẩu:</label>
-        <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
-      </div>
+        <div class="input-group">
+          <label>Mật khẩu:</label>
+          <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
+        </div>
 
-      <div class="input-group">
-        <label>Nhập lại mật khẩu:</label>
-        <input v-model="passwordReenter" placeholder="Nhập lại mật khẩu..." type="password" required />
-      </div>
+        <div class="input-group">
+          <label>Nhập lại mật khẩu:</label>
+          <input v-model="passwordReenter" placeholder="Nhập lại mật khẩu..." type="password" required />
+        </div>
 
-      <button type="submit" @click="handlePasswordChange">Đổi mật khẩu</button>
-      <span style="text-align: center; color: red" v-if="error">{{ error  }}</span>
-      <span style="text-align: center; color: cyan" v-if="success">{{ success  }}</span>
-    </form>
+        <button type="submit">Đổi mật khẩu</button>
+        <span style="text-align: center; color: red" v-if="error">{{ error  }}</span>
+        <span style="text-align: center; color: cyan" v-if="success">{{ success  }}</span>
+      </form>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '../api';
+import api from '../../api';
 const email = ref('')
 const password = ref(''); const passwordReenter = ref('')
 const error = ref(''); const success = ref('');
@@ -45,7 +47,7 @@ const handlePasswordChange = async () => {
         })
         error.value = '';
         success.value = 'Đổi mật khẩu thành công';
-        setTimeout(() => router.push('/login'), 300);
+        router.push('/login');
     }
     else {
         success.value = '';
@@ -61,9 +63,20 @@ const handlePasswordChange = async () => {
 </script>
 
 <style scoped>
+.wrapper {
+  min-height: 100vh;
+  background: 
+      linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+      url('../../assets/banner.jpg') no-repeat center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
 .container {
-  max-width: 400px;
-  margin: 80px auto;
+  width: 400px;
+  margin: 0 auto;
   padding: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -100,11 +113,11 @@ button {
   padding: 0.75rem;
   font-size: 1rem;
   background-color: var(--accent-primary);
-  color: #fff;
+  color: var(--text-primary);
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 1rem;
+  margin: 1rem 0 0.5rem 0;
 }
 
 button:hover {

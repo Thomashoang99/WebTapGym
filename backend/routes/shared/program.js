@@ -12,15 +12,11 @@ router.get('/', optionalAuth, async (req, res) => {
     let {
       keywords,
       difficulty,
-      durationMin,
-      durationMax,
+      durationMin, durationMax,
       isPaid,
-      priceMin,
-      priceMax,
-      page = 1,
-      limit = 10,
-      sortBy = 'createdAt',
-      sortOrder = 'desc'
+      priceMin, priceMax,
+      page = 1, limit = 10,
+      sortBy = 'createdAt', sortOrder = 'desc'
     } = req.query;
 
     // 2) Build Mongo filter
@@ -76,7 +72,8 @@ router.get('/', optionalAuth, async (req, res) => {
     if (req.user && req.user._id) {
       const purchases = await Purchase.find({
         user:    req.user._id,
-        program: { $in: programs.map(p => p._id) }
+        program: { $in: programs.map(p => p._id) },
+        status: 'completed'
       }).select('program');
       purchasedSet = new Set(purchases.map(p => p.program.toString()));
     }
@@ -90,7 +87,6 @@ router.get('/', optionalAuth, async (req, res) => {
 
     // 7) Send the response
     res.json({
-      page,
       totalPages: Math.ceil(total / limit),
       count: total,
       results: resultsWithFlag
@@ -102,14 +98,34 @@ router.get('/', optionalAuth, async (req, res) => {
 });
 
 // GET single program
-router.get('/:id', async (req, res) => {
+router.get('/:id', optionalAuth, async (req, res) => {
   try {
-    const prog = await Program.findById(req.params.id).populate('exercises.exercise');
-    if (!prog) return res.status(404).json({ error: 'Program not found' });
-    res.json(prog);
+    const programId = req.params.id;
+
+    const program = await Program
+      .findById(programId)
+      .populate('exercises.exercise');
+    if (!program) {
+      return res.status(404).json({ error: 'Program not found' });
+    }
+
+    let purchased = false;
+    if (req.user && req.user._id) {
+      const purchase = await Purchase.findOne({
+        user:    req.user._id,
+        program: programId,
+        status: 'completed'
+      });
+      purchased = !!purchase;
+    }
+
+    const obj = program.toObject();
+    obj.purchased = purchased;
+    res.json(obj);
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Can't retrieve program" });
+    console.error('Error fetching program detail:', err);
+    res.status(500).json({ error: 'Could not retrieve program' });
   }
 });
 

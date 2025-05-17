@@ -5,23 +5,20 @@ const Exercise  = require('../models/Exercise');
 require('dotenv').config();
 
 const seedPrograms = async () => {
-  // 1) wipe old programs
   await Program.deleteMany();
 
-  // 2) load all exercises into a map by name
   const exercises = await Exercise.find({});
   const byName = exercises.reduce((map, ex) => {
     map[ex.name] = ex._id;
     return map;
   }, {});
 
-  // 3) define your program data
   const programs = [
     {
       name: 'Beginner Full-Body Blast',
       description: 'A 4-week program covering all major muscle groups with bodyweight and light equipment.',
       difficulty: 'Beginner',
-      duration: 4,           // in weeks
+      duration: 4,        
       exercises: [
         { exercise: byName['Push-Up'],          sets: 3, reps: '10–12' },
         { exercise: byName['Barbell Squat'],            sets: 3, reps: '12–15' },
@@ -43,7 +40,7 @@ const seedPrograms = async () => {
         { exercise: byName['Cable Chest Fly'],     sets: 4, reps: '10–12' },
       ],
       isPaid: true,
-      price: 29.99
+      price: 20000
     },
     {
       name: 'Advanced Power & Hypertrophy',
@@ -57,11 +54,10 @@ const seedPrograms = async () => {
         { exercise: byName['Triceps Pushdown'],    sets: 4, reps: '10–12' },
       ],
       isPaid: true,
-      price: 49.99
+      price: 30000
     }
   ];
 
-  // 4) insert and report
   await Program.insertMany(programs);
   console.log('Programs data seeded!');
 };

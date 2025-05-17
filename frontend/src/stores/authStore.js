@@ -7,7 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref(sessionStorage.getItem('gym-user-token'));
   const user = ref(null);
 
-  const isLoggedIn = computed(() => !!token.value);
+  const isLoggedIn = computed(() => !!token.value || false);
 
   const login = async (credentials) => {
     try {

@@ -1,11 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '../stores/authStore';
 import NProgress  from 'nprogress';
 import 'nprogress/nprogress.css';
-import Main from '../pages/main.vue';
-import Home from '../pages/homepage.vue';
-import Login from '../pages/login.vue';
-import Register from '../pages/register.vue';
-import PasswordRecovery from '../pages/password-recover.vue';
+import Main from '../pages/user/main.vue';
 
 const routes = [
     {
@@ -13,30 +10,55 @@ const routes = [
         component: Main,
         redirect: 'home',
         children: [
-            {
-                path: 'home', name: 'Home', component: Home
-            },
-            {
-              path: '/exercises',
-              name: 'Exercises',
-              component: () => import('../pages/Exercises.vue')
-            },
-            {
-              path: '/programs',
-              name: 'Programs',
-              component: () => import('../pages/programs.vue')
-            },
+          {
+            path: 'home', 
+            name: 'Home', 
+            component: () => import('../pages/user/homepage.vue')
+          },
+          {
+            path: '/articles',
+            name: 'Articles',
+            component: () => import('../pages/user/article.vue')
+          },
+          {
+            path: '/articles/details.:id',
+            name: 'ArticleDetails',
+            component: () => import('../pages/user/article-details.vue')
+          },
+          {
+            path: '/exercises',
+            name: 'Exercises',
+            component: () => import('../pages/user/Exercises.vue')
+          },
+          {
+            path: '/programs',
+            name: 'Programs',
+            component: () => import('../pages/user/programs.vue')
+          },
+          {
+            path: '/programs/details/:id',
+            name: 'ProgramDetail',
+            component: () => import('../pages/user/program-details.vue')
+          },
+          {
+            path: '/progress-tracking',
+            name: 'ProgressTracking',
+            component: () => import('../pages/user/progress-tracking.vue'),
+            meta: { requiresAuth: true }
+          }
         ]
     },
- 
     {
-        path: '/register', name: 'Register', component: Register
+      path: '/checkout', name: 'Checkout', component: () => import ('../pages/user/checkout.vue')
     },
     {
-        path: '/login', name: 'Login', component: Login
+        path: '/register', name: 'Register', component: () => import ('../pages/entry/register.vue')
     },
     {
-      path: '/password-recovery', name: 'Password-Recovery', component: PasswordRecovery
+        path: '/login', name: 'Login', component: () => import ('../pages/entry/login.vue')
+    },
+    {
+      path: '/password-recovery', name: 'Password-Recovery', component: () => import ('../pages/entry/password-recover.vue')
     }
 ]
 
@@ -46,8 +68,14 @@ const router = createRouter({
   });
 
 router.beforeEach((to, from, next) => {
-  NProgress.start();
-  next();
+  const auth = useAuthStore();
+  if (to.meta.requiresAuth && !auth.isLoggedIn){
+    next({ name: 'Login' });
+  }
+  else{
+    NProgress.start();
+    next();
+  }
 });
 
 router.afterEach(() => {

@@ -1,13 +1,10 @@
-<!-- src/pages/Programs.vue -->
 <template>
   <div class="programs-page">
-    <!-- Sidebar Filters -->
     <aside class="filter-bar">
       <h2>Filters</h2>
 
-      <!-- Keyword Search -->
       <div class="filter-group">
-        <label for="keywords">Search</label>
+        <h3>Search</h3>
         <input
           id="keywords"
           v-model="filters.keywords"
@@ -16,9 +13,8 @@
         />
       </div>
 
-      <!-- Difficulty -->
       <div class="filter-group">
-        <label for="difficulty">Difficulty</label>
+        <h3>Difficulty</h3>
         <select id="difficulty" v-model="filters.difficulty" class="filter-select">
           <option value="">All</option>
           <option v-for="d in difficulties" :key="d" :value="d">
@@ -27,11 +23,10 @@
         </select>
       </div>
 
-      <!-- Duration Slider -->
       <div class="filter-group">
-        <label for="durationMax">
+        <h3>
           Max Duration: {{ filters.durationMax }} wk<span v-if="filters.durationMax>1">s</span>
-        </label>
+        </h3>
         <input
           id="durationMax"
           type="range"
@@ -41,9 +36,8 @@
         />
       </div>
 
-      <!-- Price -->
       <div class="filter-group">
-        <label for="priceFilter">Price</label>
+        <h3>Price</h3>
         <select id="priceFilter" v-model="filters.isPaid" class="filter-select">
           <option value="">All</option>
           <option value="false">Free</option>
@@ -51,14 +45,12 @@
         </select>
       </div>
 
-      <!-- Apply / Reset -->
       <div class="filter-actions">
         <button @click="applyFilters">Apply</button>
         <button class="reset" @click="resetFilters">Reset</button>
       </div>
     </aside>
 
-    <!-- Main Content -->
     <section class="results-section">
       <div v-if="!authStore.isLoggedIn" class="guest-prompt">
         <button @click="router.push('/login')">
@@ -66,7 +58,6 @@
         </button>
       </div>
 
-      <!-- Sorting Controls -->
       <div class="sort-bar">
         <label>
           Sort by
@@ -84,7 +75,6 @@
         </label>
       </div>
 
-      <!-- Grid of Program Cards -->
       <div class="programs-grid">
         <div
           v-for="prog in programs"
@@ -105,12 +95,11 @@
             class="buy button-primary"
             @click="buyProgram(prog._id)"
           >
-            Buy Now {{ prog.price.toFixed(2) }}
+            Buy Now! {{ formatNumber(prog.price) }}đ
           </button>
         </div>
       </div>
 
-      <!-- Pagination -->
       <div class="pagination">
         <button :disabled="page === 1" @click="changePage(page - 1)">
           Prev
@@ -121,7 +110,6 @@
         </button>
       </div>
 
-      <!-- Loading / Error -->
       <div v-if="loading" class="status">Loading…</div>
       <div v-if="error" class="status error">{{ error }}</div>
     </section>
@@ -130,17 +118,18 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/authStore';
-import api from '../api';
+import { useRouter, useRoute } from 'vue-router';
+import { useAuthStore } from '../../stores/authStore';
+import { useCartStore } from '../../stores/cartStore';
+import api from '../../api';
+import { formatNumber } from '../../utils/helper';
 
-const router    = useRouter();
+const router    = useRouter(); const route = useRoute();
 const authStore = useAuthStore();
+const cartStore = useCartStore();
 
-// Static options
 const difficulties = ['Beginner', 'Intermediate', 'Advanced'];
 
-// Reactive state
 const filters = reactive({
   keywords: '',
   difficulty: '',
@@ -161,7 +150,6 @@ const totalPages = ref(1);
 const loading = ref(false);
 const error = ref(null);
 
-// Fetch programs with filters, sorting, pagination
 const fetchPrograms = async () => {
   loading.value = true;
   error.value   = null;
@@ -180,7 +168,6 @@ const fetchPrograms = async () => {
     const res = await api.get('/shared/program', { params });
     let list = res.data.results;
 
-    // Hide paid programs for guests
     if (!authStore.isLoggedIn) {
       list = list.filter(p => !p.isPaid);
     }
@@ -194,7 +181,6 @@ const fetchPrograms = async () => {
   }
 };
 
-// Apply/reset helpers
 const applyFilters = () => {
   page.value = 1;
   fetchPrograms();
@@ -208,21 +194,21 @@ const resetFilters = () => {
   fetchPrograms();
 };
 
-// Pagination
 const changePage = p => {
   page.value = p;
   fetchPrograms();
 };
 
-// Button actions
 const viewDetails = id => {
-  router.push(`/programs/${id}`);
+  router.push(`/programs/details/${id}`)
 };
 const buyProgram = id => {
-  router.push(`/programs/${id}`);
+  const program = programs.value.find(p => p._id === id);
+  if (program){
+    cartStore.addToCart(program);
+  }
 };
 
-// Watch sorting changes
 watch(
   () => [sorting.sortBy, sorting.sortOrder],
   () => {
@@ -231,8 +217,20 @@ watch(
   }
 );
 
-// Initial load
-onMounted(fetchPrograms);
+watch(route.query.payment, (paymentStatus) => {
+
+})
+onMounted(() => {
+  fetchPrograms();
+  const { payment } = route.query;
+  if (payment === 'success'){
+    cartStore.clearCart();
+    alert('Purchase successful!');
+  }
+  else if (payment === 'failed') {
+     alert('Purchase failed!');
+  }
+});
 </script>
 
 <style scoped>
@@ -249,6 +247,8 @@ onMounted(fetchPrograms);
   border-radius: 4px;
   box-shadow: 0 0 4px rgba(0,0,0,0.05);
   height: 100vh;
+  background: var(--background-secondary);
+  border-radius: 8px;
 }
 .filter-bar h2 {
   margin-bottom: 0.5rem;
@@ -341,6 +341,14 @@ onMounted(fetchPrograms);
 }
 .buy {
   border: 2px solid orange;
+}
+
+.program-card.buy {
+  scale: 1.02;
+}
+
+button.buy{
+  text-transform: uppercase;
 }
 
 /* Pagination */

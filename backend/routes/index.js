@@ -1,17 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-//Route cho user
+router.use('/payment/vnpay', require('./payment/vnpay'));
+
 router.use('/user/auth', require('./user/auth')); 
 router.use('/user/bookmark', require('./user/bookmark')); 
+router.use('/user/purchase', require('./user/purchase'));
+router.use('/user/program', require('./user/program'));
 
-//Route cho admin
+
 router.use('/admin/auth', require('./admin/auth')); 
 router.use('/admin/article', require('./admin/article')); 
 router.use('/admin/exercise', require('./admin/exercise')); 
 router.use('/admin/program', require('./admin/program')); 
 
-//Route dùng chung
+
 router.use('/shared/article', require('./shared/article')); 
 router.use('/shared/exercise', require('./shared/exercise')); 
 router.use('/shared/program', require('./shared/program')); 

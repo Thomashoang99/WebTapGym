@@ -4,22 +4,24 @@ const UserCounter = require('./UserCounter');
 
 const UserSchema = new Schema({
     userId: { 
-      type: Number, unique: true 
+      type: Number, unique: true, minlength: 3, maxlength: 30
     },
     username: { 
       type: String, required: true, unique: true, trim: true 
     },
     email: { 
-      type: String, required: true, unique: true, trim: true 
+      type: String, required: true, unique: true, trim: true, lowercase: true,
+      match: [/.+@.+\..+/, 'Please fill a valid email address']
     },
     password: { 
-      type: String, required: true
+      type: String, required: true, select: false
      },
     role: { 
       type: String, 
       enum: ['admin', 'user'], default: 'user', 
       required: true }
-})
+}, { timestamps: true })
+
 
 UserSchema.pre('save', async function (next) {
     if (this.isModified('password')){
@@ -41,6 +43,7 @@ UserSchema.pre('save', async function (next) {
 })
 
 UserSchema.methods.matchPassword = async function (password) {
+    console.log(password + '\n' + this.password);
     return await compare(password, this.password);
 };
 

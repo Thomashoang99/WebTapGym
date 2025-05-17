@@ -1,23 +1,25 @@
 const express = require('express');
-const { hash, compare } = require('bcryptjs');
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const auth = require('../../middleware/auth');
 
 // Đăng ký
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   try {
-    const userExists = await User.findOne({ email });
+    const formattedEmail = email.trim().toLowerCase();
+    const userExists = await User.findOne({ email: formattedEmail });
     if (userExists) 
-      return res.status(400).json({ message: 'Email đã tồn tại' });
+      return res.status(400).json({ message: 'User already exists' });
 
-    const newUser = new User({ username, email, password });
+    const newUser = new User({ 
+      username: username, 
+      email: formattedEmail, 
+      password });
     await newUser.save();
-    res.status(201).json({ message: 'Đăng ký thành công' });
+    res.status(201).json({ message: 'Successful registration!' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Error: " + err.message });
   }
 });
 
@@ -26,7 +28,7 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
     if (!user) 
       return res.status(400).json({ message: 'Sai email' });
 
@@ -51,7 +53,7 @@ router.patch('/reset-password', async (req, res) => {
   const { email, newPassword } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
     if (!user)
       return res.status(400).json({ message: 'Invalid email address' });
 

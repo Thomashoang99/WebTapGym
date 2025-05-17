@@ -1,7 +1,8 @@
 <template>
+  <div class="wrapper">
     <div class="container">
         <h2>ĐĂNG NHẬP</h2>
-        <form @submit.prevent="handleLogin">
+        <form>
 
         <div class="input-group">
             <label>Email:</label>
@@ -13,7 +14,7 @@
             <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
         </div>
         
-        <button type="submit" @click="handleLogin">Đăng nhập</button>
+        <button type="button" @click="handleLogin">Đăng nhập</button>
         <p v-if="error" class="error">{{ error }}</p>
         <div class="optional">
           <p class="prompt">Chưa có tài khoản? <router-link to="./register">Đăng ký</router-link></p>
@@ -21,12 +22,13 @@
         </div>
         </form>
     </div>
+  </div>
 </template>
   
   <script setup>
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useAuthStore } from '../stores/authStore';
+  import { useAuthStore } from '../../stores/authStore';
 
   const email = ref(''); const password = ref('');
   const error = ref(''); 
@@ -35,21 +37,34 @@
 
   const handleLogin = async () => {
     try {
-      await auth.login({ email: email.value, password: password.value });
+      await auth.login({ 
+        email: email.value, 
+        password: password.value });
       console.log('Đăng nhập thành công. Đang chuyển hướng về trang chủ...');
-      setTimeout(() => {router.push('/home')}, 300);
+      router.push('/home');
     } catch (err) {
       console.log(err.response?.data?.message);
     }
   }
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
+  .wrapper {
+    min-height: 100vh;
+    background: 
+        linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+        url('../../assets/banner.jpg') no-repeat center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
   .container {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
-    margin: 80px auto;
+    width: 400px;
+    margin: 0 auto;
     padding: 1rem;
     border: 1px solid var(--text-secondary);
     border-radius: 8px;
@@ -91,7 +106,7 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 1rem;
+    margin: 1rem 0 0.5rem 0;
   }
   
   button:hover {

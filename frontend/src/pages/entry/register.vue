@@ -1,7 +1,8 @@
 <template>
-  <div class="container">
+  <div class="wrapper">
+<div class="container">
     <h2>ĐĂNG KÝ</h2>
-    <form @submit.prevent="handleRegister">
+    <form>
       <div class="input-group">
         <label>Tên người dùng:</label>
         <input v-model="username" placeholder="Nhập tên người dùng..." type="text" required />
@@ -17,17 +18,18 @@
         <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
       </div>
 
-      <button type="submit" @click="handleRegister">Đăng ký</button>
+      <button type="button" @click="handleRegister">Đăng ký</button>
       <p v-if="error" class="error">{{ error }}</p>
       <p class="loginPrompt">Đã có tài khoản? <router-link to="./login">Đăng nhập</router-link></p>
     </form>
+  </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-
+import api from '../../api';
 const username = ref('')
 const email = ref('')
 const password = ref('')
@@ -43,18 +45,30 @@ const handleRegister = async () => {
       password: password.value,
     })
     success.value = 'Đăng ký người dùng thành công. Chuyển hướng về trang đăng nhập...'
-    setTimeout(() => router.post('/login'), 300);
+    console.log(success.value);
+    router.push('/login');
   } catch (err) {
-    error.value = err.response?.data?.message || 'Đăng ký không thành công'
+    error.value = err.response?.data?.message;
     console.log(error.value)
   }
 } 
 </script>
 
 <style scoped>
+.wrapper {
+    min-height: 100vh;
+    background: 
+        linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+        url('../../assets/banner.jpg') no-repeat center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
 .container {
-  max-width: 400px;
-  margin: 80px auto;
+  width: 400px;
+  margin: 0 auto;
   padding: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -91,11 +105,11 @@ button {
   padding: 0.75rem;
   font-size: 1rem;
   background-color: var(--accent-primary);
-  color: #fff;
+  color: var(--text-primary);
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 1rem;
+  margin: 1rem 0 0.5rem 0;
 }
 
 button:hover {
@@ -122,4 +136,5 @@ button:hover {
 .loginPrompt a:active{
   color: red;
 }
+
 </style>
