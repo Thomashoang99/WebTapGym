@@ -1,13 +1,13 @@
 <template>
   <div class="cart-sidebar" :class="{ open: visible }">
     <header class="cart-header">
-      <h2>Giỏ hàng</h2>
+      <h2>Cart</h2>
       <button class="close-btn" @click="$emit('close')">×</button>
     </header>
 
     <div class="cart-content">
       <div v-if="cartStatus.itemList.length === 0" class="empty">
-        Giỏ hàng đang trống!
+        Cart is empty!
       </div>
       <ul v-else class="cart-items">
         <li v-for="item in cartStatus.itemList" :key="item.id" class="cart-item">
@@ -20,14 +20,14 @@
 
     <footer class="cart-footer">
       <div class="total">
-        Tổng: {{ formatNumber(cartStatus.totalPrice) }}đ
+        Total: {{ formatNumber(cartStatus.totalPrice) }}đ
       </div>
       <button
         class="button-primary checkout-btn"
         :disabled="cartStatus.itemList.length === 0"
         @click="proceed"
       >
-        Thanh toán
+        Pay Now
       </button>
     </footer>
   </div>

@@ -47,7 +47,6 @@ router.post('/create-payment-url', auth, async (req, res, next) => {
         vnp_ReturnUrl: process.env.VNP_RETURN_URL, 
         vnp_Locale: VnpLocale.VN,
     });
-    console.log('Successfully created payment URL');
     return res.json({
       success: true,
       paymentUrl,

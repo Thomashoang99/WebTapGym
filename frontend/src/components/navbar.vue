@@ -33,7 +33,7 @@ const username = computed(() => {
 const onLogout = () => {
     alert('Logging out...');
     authStore.logout();
-    router.push('/');
+    router.push('/home');
 }
 </script>
 

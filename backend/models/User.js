@@ -43,7 +43,6 @@ UserSchema.pre('save', async function (next) {
 })
 
 UserSchema.methods.matchPassword = async function (password) {
-    console.log(password + '\n' + this.password);
     return await compare(password, this.password);
 };
 

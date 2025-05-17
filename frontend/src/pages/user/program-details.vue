@@ -7,21 +7,21 @@
       <header class="detail-header">
         <h1>{{ program.name }}</h1>
         <p class="meta">
-          <span>{{ program.duration }} tuần</span>
+          <span>{{ program.duration }} week(s)</span>
           •
           <span>{{ program.difficulty }}</span>
         </p>
       </header>
 
       <div v-if="program.isPaid && !program.purchased" class="preview">
-        <p>Chương trình này có trả phí!</p>
-        <button class="button-primary" @click="addToCart">Mua chương trình</button>
+        <p>This program is paid!</p>
+        <button class="button-primary" @click="addToCart">Buy Now</button>
       </div>
 
       <div v-else class="details">
         <p class="description">{{ program.description }}</p>
 
-        <h2>Danh sách bài tập</h2>
+        <h2>Exercises List</h2>
         <ul class="exercise-list">
           <li v-for="(ex, index) in program.exercises" :key="ex._id" class="exercise">
             <h2><span>{{ index + 1 }} </span>. {{ ex.exercise.name }}</h2>
@@ -37,9 +37,9 @@
 
         <!-- Notes & Progress -->
         <div class="progress-section">
-          <h2>Ghi chú &amp; Tiến độ</h2>
+          <h2>User Notes</h2>
 
-          <label for="prog-notes">Ghi chú</label>
+          <label for="prog-notes">Notes</label>
           <textarea
             id="prog-notes"
             v-model="form.notes"
@@ -48,7 +48,7 @@
           ></textarea>
 
           <label for="prog-level">
-            Tiến độ: {{ form.progress }}%
+            Progress: {{ form.progress }}%
             <input
               id="prog-level"
               type="range"

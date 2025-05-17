@@ -16,32 +16,32 @@ const routes = [
             component: () => import('../pages/user/homepage.vue')
           },
           {
-            path: '/articles',
+            path: 'articles',
             name: 'Articles',
             component: () => import('../pages/user/article.vue')
           },
           {
-            path: '/articles/details.:id',
+            path: 'articles/details.:id',
             name: 'ArticleDetails',
             component: () => import('../pages/user/article-details.vue')
           },
           {
-            path: '/exercises',
+            path: 'exercises',
             name: 'Exercises',
             component: () => import('../pages/user/Exercises.vue')
           },
           {
-            path: '/programs',
+            path: 'programs',
             name: 'Programs',
             component: () => import('../pages/user/programs.vue')
           },
           {
-            path: '/programs/details/:id',
+            path: 'programs/details/:id',
             name: 'ProgramDetail',
             component: () => import('../pages/user/program-details.vue')
           },
           {
-            path: '/progress-tracking',
+            path: 'progress-tracking',
             name: 'ProgressTracking',
             component: () => import('../pages/user/progress-tracking.vue'),
             meta: { requiresAuth: true }

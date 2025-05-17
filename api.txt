@@ -1,0 +1,4 @@
+* Terminal ID / Mã Website (vnp_TmnCode): EW2CG0T2
+* Secret Key / Chu?i bí m?t t?o checksum (vnp_HashSecret): CUF5JJ9CXQQF8UO5ABE190B2X579PBGA
+* Url thanh toán môi tr??ng TEST (vnp_Url): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+
