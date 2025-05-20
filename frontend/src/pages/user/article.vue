@@ -69,14 +69,13 @@
       <div class="articles-grid">
         <div v-for="art in articles" :key="art._id" class="article-card">
           <img v-if="art.imageUrl" :src="art.imageUrl" alt="" />
-          <h3>{{ art.title }}</h3>
-          <p class="summary">{{ art.summary }}</p>
-          <router-link
-            class="button-secondary"
-            :to="`/articles/${art._id}`"
-          >
-            Read More
-          </router-link>
+          <section>
+            <p>{{ formatDate(art.createdAt) }}</p>
+            <h3>{{ art.title }}</h3>
+            <p class="summary">{{ art.summary }}</p>
+            <router-link class="button-primary read-more" :to="`/articles/details/${art._id}`">Read More</router-link>
+          </section>
+
         </div>
       </div>
 
@@ -101,6 +100,7 @@
 <script setup>
 import { ref, reactive, watch, onMounted, computed } from 'vue';
 import api from '../../api';
+import { formatDate } from '../../utils/helper';
 
 const categoriesList = ['Nutrition', 'Training', 'Recovery'];
 
@@ -248,41 +248,52 @@ onMounted(fetchArticles);
 /* Grid */
 .articles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 .article-card {
   background: var(--background-secondary);
   padding: 1rem;
   border-radius: 8px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.75rem;
+  height: 250px;
 }
 .article-card img {
-  width: 100%;
+  width: 20%;
+  height: auto;
+  vertical-align: middle;
   border-radius: 4px;
-  object-fit: cover;
-  height: 140px;
+  
 }
-.article-card h3 {
+.article-card section {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.article-card section h3 {
   margin: 0;
   font-size: 1.2rem;
 }
-.article-card .summary {
+.article-card section .summary {
   flex: 1;
   color: var(--text-secondary);
   font-size: 0.9rem;
 }
-.article-card .button-secondary {
-  align-self: flex-start;
+
+.read-more {
+  flex: 0;
+  width: auto;
 }
+
 
 /* Pagination */
 .pagination {
   display: flex;
   gap: 1rem;
-  align-items: center;
+  align-self: center;
   margin: 1rem 0;
 }
 .pagination button:disabled {
@@ -298,4 +309,28 @@ onMounted(fetchArticles);
 .status.error {
   color: #f44336;
 }
+
+/* Hover lift & shadow on cards */
+.article-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.article-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .articles-page {
+    flex-direction: column;
+  }
+  .filter-bar {
+    flex: 1 1 auto;
+    margin-bottom: 1rem;
+  }
+  .articles-grid {
+    padding: 0 0.5rem;
+  }
+}
+
 </style>

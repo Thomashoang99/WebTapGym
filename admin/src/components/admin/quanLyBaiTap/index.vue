@@ -44,7 +44,8 @@
                 </option>
               </select>
             </section>
-            </div>         
+            </div>
+            <button class="btn-new" @click="createExercise">+ New...</button>      
           </section>
           <section class="card-body">
               <div class="table-responsive">
@@ -60,7 +61,7 @@
                       </thead>
                       <tbody>
                         <tr v-for="(ex, index) in exercises" :key="ex._id" class="data-row">
-                          <td class="row-index"><h6>{{ (currentPage - 1) * pageSize + index + 1 }}</h6></td>
+                          <td class="row-index"><h6>{{ (currentPage - 1) * limit + index + 1 }}</h6></td>
                           <td class="row-image"><img :src="ex.imageUrl" /></td>
                           <td class="row-name">{{ ex.name }}</td>
                           <td class="row-info">
@@ -70,9 +71,9 @@
                           </td>
                           <td class="row-actions">
                             <div class="btn-group">
-                              <button class="btn-view">View</button>
-                              <button class="btn-edit">Edit</button>
-                              <button class="btn-delete">Delete</button>
+                              <button class="btn-view" @click="viewExercise(ex._id)">View</button>
+                              <button class="btn-edit" @click="editExercise(ex._id)">Edit</button>
+                              <button class="btn-delete" @click="deleteExercise(ex._id)">Delete</button>
                             </div>
                           </td>
                         </tr>
@@ -86,25 +87,26 @@
             <button @click="nextPage" :disabled="currentPage === totalPages">►</button>
           </section>
       </div>
+      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+      <div class="modal-container">
+          <ExerciseEdit
+            :exerciseId="currentId"
+            :readOnly="modalMode==='view'"
+            @close="closeModal"
+            @saved="onSaved"
+          />
+    </div>
+  </div> 
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import api from '../../../api';
 
 // Filter and sort options
-const equipmentOptions = [
-  'Barbell',
-  'Dumbbell',
-  'Machine',
-  'Bodyweight'
-];
-const difficultyOptions = [
-  'Beginner',
-  'Intermediate',
-  'Advanced'
-];
+const equipmentOptions = ['Barbell', 'Dumbbell', 'Machine', 'Bodyweight'];
+const difficultyOptions = ['Beginner', 'Intermediate', 'Advanced'];
 const sortByOptions = [
   { label: 'Name', value: 'name' },
   { label: 'Date Created', value: 'createdAt' }
@@ -114,14 +116,13 @@ const sortOrderOptions = [
   { label: 'Z-A', value: 'desc' }
 ];
 
-// Reactive state
 const selectedEquipment = ref('');
 const selectedDifficulty = ref('');
 const selectedSortBy = ref('createdAt');
 const selectedSortOrder = ref('desc');
 const currentPage = ref(1);
 const totalPages = ref(1);
-const pageSize = ref(10);
+const limit = ref(10);
 
 
 const exercises = ref([]);
@@ -134,16 +135,14 @@ async function fetchExercises() {
   try {
     const params = {
       page: currentPage.value,
-      limit: pageSize.value,
+      limit: limit.value,
       sortBy: selectedSortBy.value,
       sortOrder: selectedSortOrder.value
     };
-    if (selectedEquipment.value) {
-      params.equipment = selectedEquipment.value;
-    }
-    if (selectedDifficulty.value) {
+    if (selectedEquipment.value)
+        params.equipment = selectedEquipment.value;
+    if (selectedDifficulty.value)
       params.difficulty = selectedDifficulty.value;
-    }
 
     const { data } = await api.get('/shared/exercise', { params });
     exercises.value = data.results;
@@ -157,16 +156,14 @@ async function fetchExercises() {
 }
 
 watch(
-  [
-    selectedEquipment,
-    selectedDifficulty,
-    selectedSortBy,
-    selectedSortOrder
+  [() => selectedDifficulty, () => selectedEquipment,
+    () => selectedSortBy, () => selectedSortOrder
   ],
   () => {
     currentPage.value = 1;
     fetchExercises();
-  }
+  },
+  { deep: true }
 );
 
 // Watch page changes to refetch
@@ -174,14 +171,41 @@ watch(currentPage, fetchExercises);
 
 // Pagination handlers
 function prevPage() {
-  if (currentPage.value > 1) currentPage.value--;
+  if (currentPage.value > 1) currentPage.value -= 1;
 }
 
 function nextPage() {
-  if (currentPage.value < totalPages.value) currentPage.value++;
+  if (currentPage.value < totalPages.value) currentPage.value += 1;
 }
 
 onMounted(fetchExercises);
+
+import ExerciseEdit from '../../modals/exerciseEdit.vue';
+const showModal   = ref(false);
+const modalMode   = ref('view');
+const currentId   = ref(null);
+
+function openModal(id, mode) {
+  currentId.value = id;
+  modalMode.value = mode;
+  showModal.value = true;
+}
+function closeModal() {
+  showModal.value = false;
+}
+function onSaved() {
+  closeModal();
+  fetchExercises(); 
+}
+
+function createExercise()  { openModal(null, 'edit');  }
+function viewExercise(id)  { openModal(id, 'view'); }
+function editExercise(id)  { openModal(id, 'edit'); }
+async function deleteExercise(id) {
+  const res = await api.delete(`/admin/exercise/${id}`);
+  if (res.statusText === 'OK')
+    fetchExercises();
+}
 </script>
 
 <style scoped>
@@ -272,5 +296,23 @@ th, td {
   margin: 0 1rem;
   font-size: 1.25rem;
   font-weight: bold;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-container {
+  background: var(--background-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 </style>

@@ -13,6 +13,7 @@ async function auth(req, res, next) {
 
     req.user = {
       _id: user._id,
+      role: user.role,
       userId: user.userId
     };
     next();

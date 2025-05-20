@@ -69,6 +69,7 @@ router.get('/:id', async (req, res) => {
     if (!exercise) {
       return res.status(404).json({ error: 'Bài tập không tồn tại' });
     }
+    console.log(exercise);
     res.status(200).json(exercise);
   } catch (err) {
     console.error(err);

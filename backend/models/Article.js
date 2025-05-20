@@ -25,7 +25,7 @@ const ArticleSchema = new Schema({
         }
     },
     categories: {
-        type: [String],
+        type: String,
         enum: ['Nutrition', 'Training', 'Recovery'],
         validate: [
             {

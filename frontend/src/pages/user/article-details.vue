@@ -6,10 +6,9 @@
       <h1>{{ article.title }}</h1>
       <p class="meta">
         {{ formattedDate }} •
-        <span v-for="(cat, i) in article.categories" :key="cat">
-          {{ cat }}<span v-if="i < article.categories.length - 1">, </span>
-        </span>
+        {{ article.categories }}
       </p>
+      <strong>{{ article.summary }}</strong>
 
       <img v-if="article.imageUrl" :src="article.imageUrl" alt="Article image" />
 
@@ -25,7 +24,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import api from '../api';
+import api from '../../api';
 import { formatDate } from '../../utils/helper';
 const route   = useRoute();
 const loading = ref(true);
@@ -97,4 +96,33 @@ img {
   display: inline-block;
   margin-top: 1rem;
 }
+
+/* “Back to Articles” link hover */
+.back-btn {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+.back-btn:hover {
+  color: var(--accent-primary);
+  text-decoration: underline;
+}
+
+/* Limit image height & center it */
+img {
+  max-height: 400px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 1.5rem;
+}
+
+/* Make content more readable on narrow screens */
+@media (max-width: 600px) {
+  .article-detail-page {
+    padding: 0.5rem;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
 </style>

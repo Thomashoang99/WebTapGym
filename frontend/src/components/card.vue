@@ -13,7 +13,7 @@
         <p>{{ formattedDescription }}</p>
     </div>
     <div class="card-footer">
-        <button class="learn-more" @click="onClick">LEARN MORE</button>
+        <button class="button-primary learn-more" @click="onClick">LEARN MORE</button>
     </div>
 </div>
 </template>
