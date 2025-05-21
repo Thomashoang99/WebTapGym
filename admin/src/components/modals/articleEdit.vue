@@ -149,6 +149,10 @@ async function save() {
 </script>
 
 <style scoped>
+* {
+  color: var(--text-primary);
+}
+
 .header {
   color: var(--text-primary);
   margin-bottom: 1rem;

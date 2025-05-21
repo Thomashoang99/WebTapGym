@@ -7,12 +7,31 @@ const isAdmin = require('../../middleware/admin');
 
 const parseValues = str => str.split(',').map(s => s.trim());
 
+// GET single program
+router.get('/:id', auth, isAdmin, async (req, res) => {
+  try {
+    const programId = req.params.id;
+
+    const program = await Program
+      .findById(programId)
+      .populate('exercises.exercise');
+    if (!program) {
+      return res.status(404).json({ error: 'Program not found' });
+    }
+
+    res.json(program);
+
+  } catch (err) {
+    console.error('Error fetching program detail:', err);
+    res.status(500).json({ error: 'Could not retrieve program' });
+  }
+});
 
 // CREATE new program
-router.post('/', async (req, res) => {
+router.post('/', auth, isAdmin, async (req, res) => {
   try {
-    const newProg = await Program.create(req.body);
-    res.status(201).json(newProg);
+    const program = await Program.create(req.body);
+    res.status(201).json(program);
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: err.message });

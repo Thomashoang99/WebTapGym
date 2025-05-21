@@ -84,7 +84,17 @@
         @saved="onSaved"
       />
     </div>
-  </div>  
+  </div> 
+  
+  <div v-if="showConfirm" class="modal-overlay" @click.self="closeConfirm">
+      <div class="modal-container">
+          <ConfirmModal
+            :message="'Are you sure you want to delete this article?'"
+            @confirm="confirmDelete"
+            @close="closeConfirm"
+          />
+      </div>
+    </div> 
   </div>
 </template>
 
@@ -182,9 +192,26 @@ function createArticle()  { openModal(null, 'edit');  }
 function viewArticle(id)  { openModal(id, 'view'); }
 function editArticle(id)  { openModal(id, 'edit'); }
 async function deleteArticle(id) {
-  const res = await api.delete(`/admin/article/${id}`);
-  if (res.statusText === 'OK')
-    fetchArticles();
+  currentId.value = id;
+  openConfirm();
+}
+
+//Confirm modal
+import ConfirmModal from '../../modals/confirm.vue';
+const showConfirm   = ref(false);
+function openConfirm()  {  showConfirm.value = true;   }
+function closeConfirm() {  showConfirm.value = false;  }
+async function confirmDelete() {
+  try{
+    const res = await api.delete(`/admin/article/${currentId.value}`);
+    if (res.statusText === 'OK'){
+      alert('Aricle deleted');
+      closeConfirm();
+      fetchArticles();
+    }
+  } catch (err){
+    alert("Failed to delete this article");
+  }
 }
 </script>
 

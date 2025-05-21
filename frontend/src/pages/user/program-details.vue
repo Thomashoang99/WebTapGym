@@ -122,7 +122,7 @@ async function saveProgress() {
       progress: form.progress
     });
     if (result.statusText === 'OK'){
-        alert('Đã lưu ghi chú và tiến độ của chương trình này!');
+        alert('Your notes and progress has been saved');
     }
   } catch (err) {
     saveError.value = err.response?.data?.error || err.message;

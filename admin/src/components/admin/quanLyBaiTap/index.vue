@@ -44,8 +44,8 @@
                 </option>
               </select>
             </section>
-            </div>
             <button class="btn-new" @click="createExercise">+ New...</button>      
+            </div>
           </section>
           <section class="card-body">
               <div class="table-responsive">
@@ -87,7 +87,9 @@
             <button @click="nextPage" :disabled="currentPage === totalPages">►</button>
           </section>
       </div>
-      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+
+      <!--Edit modal-->
+    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-container">
           <ExerciseEdit
             :exerciseId="currentId"
@@ -95,13 +97,23 @@
             @close="closeModal"
             @saved="onSaved"
           />
-    </div>
-  </div> 
+      </div>
+    </div> 
+
+    <div v-if="showConfirm" class="modal-overlay" @click.self="closeConfirm">
+      <div class="modal-container">
+          <ConfirmModal
+            :message="'Are you sure you want to delete this exercise?'"
+            @confirm="confirmDelete"
+            @close="closeConfirm"
+          />
+      </div>
+    </div> 
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import api from '../../../api';
 
 // Filter and sort options
@@ -180,12 +192,13 @@ function nextPage() {
 
 onMounted(fetchExercises);
 
+//Edit modal
 import ExerciseEdit from '../../modals/exerciseEdit.vue';
 const showModal   = ref(false);
 const modalMode   = ref('view');
 const currentId   = ref(null);
 
-function openModal(id, mode) {
+function openEditModal(id, mode) {
   currentId.value = id;
   modalMode.value = mode;
   showModal.value = true;
@@ -198,13 +211,30 @@ function onSaved() {
   fetchExercises(); 
 }
 
-function createExercise()  { openModal(null, 'edit');  }
-function viewExercise(id)  { openModal(id, 'view'); }
-function editExercise(id)  { openModal(id, 'edit'); }
-async function deleteExercise(id) {
-  const res = await api.delete(`/admin/exercise/${id}`);
-  if (res.statusText === 'OK')
-    fetchExercises();
+function createExercise()  { openEditModal(null, 'edit');  }
+function viewExercise(id)  { openEditModal(id, 'view'); }
+function editExercise(id)  { openEditModal(id, 'edit'); }
+function deleteExercise(id) {
+  currentId.value = id;
+  openConfirm();
+}
+
+//Confirm modal
+import ConfirmModal from '../../modals/confirm.vue';
+const showConfirm   = ref(false);
+function openConfirm()  {  showConfirm.value = true;   }
+function closeConfirm() {  showConfirm.value = false;  }
+async function confirmDelete() {
+  try{
+    const res = await api.delete(`/admin/exercise/${currentId.value}`);
+    if (res.statusText === 'OK'){
+      alert('Exercise deleted');
+      closeConfirm();
+      fetchExercises();
+    }
+  } catch (err){
+    alert("Failed to delete exercise");
+  }
 }
 </script>
 
@@ -235,6 +265,12 @@ async function deleteExercise(id) {
 .filter-select{
   height: 1.5rem;
   padding-right: 1rem;
+}
+.btn-new {
+  padding: 0.25rem 0.75rem;
+  background-color: green;
+  color: var(--text-primary);
+  border-radius: 4px;
 }
 table {
   width: 100%;
@@ -314,5 +350,6 @@ th, td {
   max-width: 90vw;
   max-height: 90vh;
   overflow-y: auto;
+  
 }
 </style>

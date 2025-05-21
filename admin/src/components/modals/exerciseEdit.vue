@@ -165,10 +165,9 @@ function cancel() {
 </script>
 
 <style scoped>
-h1, h2, h3, h4, h5, h6, label{
+* {
   color: var(--text-primary);
 }
-
 .field {
   margin-bottom: 1rem;
 }
