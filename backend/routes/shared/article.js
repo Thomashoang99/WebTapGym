@@ -10,6 +10,8 @@ router.get('/', async (req, res) => {
       tags,
       page = 1,
       limit = 10,
+      createdFrom,
+      createdTo,
       sortBy = 'createdAt',
       sortOrder = 'desc'
     } = req.query;
@@ -24,6 +26,11 @@ router.get('/', async (req, res) => {
     }
     if (tags) {
       filter.tags = { $all: tags.split(',').map(t => t.trim()) };
+    }
+    if (createdFrom || createdTo) {
+      filter.createdAt = {};
+      if (createdFrom) filter.createdAt.$gte = new Date(createdFrom);
+      if (createdTo)   filter.createdAt.$lte = new Date(createdTo);
     }
 
     const pageNum = parseInt(page, 10);

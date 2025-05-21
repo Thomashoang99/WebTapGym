@@ -12,5 +12,5 @@ export function formatNumber(value, locale = 'vi-VN', options = {}) {
 
 export function formatDate(dateStr, locale = 'vi') {
   if (!dateStr) return ''
-  return dayjs(dateStr).locale(locale).format('DD MMM YYYY');
+  return dayjs(dateStr).locale(locale).format('DD MMM YYYY HH:MM:ss');
 }

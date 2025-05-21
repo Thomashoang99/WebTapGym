@@ -73,7 +73,9 @@
 import { reactive, ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../../api';
+import { useExerciseStore } from '../../stores/exerciseStore';
 
+const exerciseStore = useExerciseStore();
 const props = defineProps({
   exerciseId: { type: String, default: null },
   readOnly:  { type: Boolean, default: false }
@@ -151,6 +153,7 @@ async function save() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
     }
+    exerciseStore.clearCache();
     emit('saved');
   } catch (err) {
     error.value = err.response?.data?.error || err.message;

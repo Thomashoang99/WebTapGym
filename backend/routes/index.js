@@ -13,6 +13,7 @@ router.use('/admin/auth', require('./admin/auth'));
 router.use('/admin/article', require('./admin/article')); 
 router.use('/admin/exercise', require('./admin/exercise')); 
 router.use('/admin/program', require('./admin/program')); 
+router.use('/admin/usermgmt', require('./admin/usermgmt')); 
 
 
 router.use('/shared/article', require('./shared/article')); 

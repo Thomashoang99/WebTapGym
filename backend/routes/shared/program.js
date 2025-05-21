@@ -8,7 +8,6 @@ const parseValues = str => str.split(',').map(s => s.trim());
 
 router.get('/', optionalAuth, async (req, res) => {
   try {
-    // 1) Extract query params
     let {
       keywords,
       difficulty,
@@ -19,7 +18,6 @@ router.get('/', optionalAuth, async (req, res) => {
       sortBy = 'createdAt', sortOrder = 'desc'
     } = req.query;
 
-    // 2) Build Mongo filter
     const filter = {};
 
     if (keywords) {
@@ -52,7 +50,6 @@ router.get('/', optionalAuth, async (req, res) => {
       if (priceMax) filter.price.$lte = parseFloat(priceMax);
     }
 
-    // 3) Pagination & sorting
     page  = parseInt(page, 10);
     limit = Math.min(parseInt(limit, 10), 100);
     const skip = (page - 1) * limit;
@@ -60,14 +57,12 @@ router.get('/', optionalAuth, async (req, res) => {
     const validSortFields = ['name', 'createdAt', 'duration', 'price'];
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'createdAt';
 
-    // 4) Query programs
     const total    = await Program.countDocuments(filter);
     const programs = await Program.find(filter)
       .sort({ [sortField]: dir, _id: dir })
       .skip(skip)
       .limit(limit);
 
-    // 5) Determine which of these the user has purchased (if logged in)
     let purchasedSet = new Set();
     if (req.user && req.user._id) {
       const purchases = await Purchase.find({
@@ -78,14 +73,12 @@ router.get('/', optionalAuth, async (req, res) => {
       purchasedSet = new Set(purchases.map(p => p.program.toString()));
     }
 
-    // 6) Attach `purchased` flag
     const resultsWithFlag = programs.map(prog => {
       const obj = prog.toObject();
       obj.purchased = purchasedSet.has(obj._id.toString());
       return obj;
     });
 
-    // 7) Send the response
     res.json({
       totalPages: Math.ceil(total / limit),
       count: total,

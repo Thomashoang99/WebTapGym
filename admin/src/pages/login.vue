@@ -45,6 +45,10 @@
 </script>
   
 <style scoped>
+
+  * {
+    color: var(--text-primary);
+  }
   .wrapper {
     min-height: 100vh;
     background: 
@@ -90,6 +94,7 @@
     padding: 0.75rem 0.5rem;
     font-size: 1rem;
     border-radius: 4px;
+    color: black;
   }
   
   button {
