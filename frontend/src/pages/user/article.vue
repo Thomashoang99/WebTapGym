@@ -6,7 +6,7 @@
       <div class="filter-group">
         <h3>Search</h3>
         <input
-          id="keywords"
+          class="filter-input"
           v-model="filters.keywords"
           type="text"
           placeholder="Keywords…"
@@ -16,49 +16,44 @@
       <!-- Categories -->
       <div class="filter-group">
         <h3>Categories</h3>
-        <div class="checkbox-list">
-          <label v-for="cat in categoriesList" :key="cat">
-            <input
-              type="checkbox"
-              :value="cat"
-              v-model="filters.categories"
-            />
+        <select class="filter-select" v-model="filters.categories">
+          <option v-for="cat in categoriesList" :key="cat">
             {{ cat }}
-          </label>
-        </div>
+          </option>
+        </select>
       </div>
 
-      <!-- Tags (comma-separated) -->
       <div class="filter-group">
         <h3>Tags</h3>
-        <input
-          id="tags"
-          v-model="filters.tagsInput"
-          type="text"
-        />
+        <input class="filter-input" v-model="filters.tagsInput" type="text" />
+      </div>
+
+      <div class="filter-group date">
+        <h3>Date Created</h3>
+        <input class="filter-input" v-model="filters.createdFrom" type="date" />
+        <input class="filter-input" v-model="filters.createdTo" type="date" />
       </div>
 
       <!-- Apply / Reset -->
       <div class="filter-actions">
-        <button @click="applyFilters">Apply</button>
-        <button class="reset" @click="resetFilters">Reset</button>
+        <button class="button-primary" @click="applyFilters">Apply</button>
+        <button class="button-secondary" @click="resetFilters">Reset</button>
       </div>
     </aside>
 
     <!-- Main Content -->
     <section class="results-section">
-      <!-- Sorting Controls -->
       <div class="sort-bar">
         <label>
           Sort by
-          <select v-model="sorting.sortBy">
+          <select v-model="filters.sortBy">
             <option value="title">Title</option>
             <option value="createdAt">Date</option>
           </select>
         </label>
         <label>
           Order
-          <select v-model="sorting.sortOrder">
+          <select v-model="filters.sortOrder">
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
           </select>
@@ -73,20 +68,23 @@
             <p>{{ formatDate(art.createdAt) }}</p>
             <h3>{{ art.title }}</h3>
             <p class="summary">{{ art.summary }}</p>
-            <router-link class="button-primary read-more" :to="`/articles/details/${art._id}`">Read More</router-link>
+            <router-link
+              class="button-primary read-more"
+              :to="`/articles/details/${art._id}`"
+              >Read More</router-link
+            >
           </section>
-
         </div>
       </div>
 
       <!-- Pagination -->
       <div class="pagination">
-        <button :disabled="page === 1" @click="changePage(page - 1)">
-          Prev
+        <button  @click="prevPage" :disabled="page === 1">
+          ◄
         </button>
-        <span>Page {{ page }} of {{ totalPages }}</span>
-        <button :disabled="page === totalPages" @click="changePage(page + 1)">
-          Next
+        <span> {{ page }} / {{ totalPages }} </span>
+        <button @click="nextPage" :disabled="page === totalPages">
+          ►
         </button>
       </div>
 
@@ -98,21 +96,20 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted, computed } from 'vue';
-import api from '../../api';
-import { formatDate } from '../../utils/helper';
+import { ref, reactive, watch, onMounted, computed } from "vue";
+import api from "../../api";
+import { formatDate } from "../../utils/helper";
 
-const categoriesList = ['Nutrition', 'Training', 'Recovery'];
+const categoriesList = ["Nutrition", "Training", "Recovery"];
 
 const filters = reactive({
-  keywords: '',
-  categories: [],
-  tagsInput: ''
-});
-
-const sorting = reactive({
-  sortBy: 'createdAt',
-  sortOrder: 'desc'
+  keywords: "",
+  categories: "",
+  tagsInput: "",
+  createdFrom: "",
+  createdTo: "",
+  sortBy: "createdAt",
+  sortOrder: "desc",
 });
 
 const page = ref(1);
@@ -130,22 +127,24 @@ const fetchArticles = async () => {
     const params = {
       page: page.value,
       limit,
-      sortBy: sorting.sortBy,
-      sortOrder: sorting.sortOrder
+      ...filters,
     };
-    if (filters.keywords) {    
-        params.keywords    = filters.keywords;
+    if (filters.keywords) {
+      params.keywords = filters.keywords;
     }
-    if (filters.categories.length) {
-      params.categories = filters.categories.join(',');
+    if (filters.categories) {
+      params.categories = filters.categories;
     }
     if (filters.tagsInput) {
       params.tags = filters.tagsInput
-        .split(' ').map(t => t.trim()).filter(Boolean).join(',');
+        .split(" ")
+        .map((t) => t.trim())
+        .filter(Boolean)
+        .join(",");
     }
 
-    const res = await api.get('/shared/article', { params });
-    articles.value   = res.data.results;
+    const res = await api.get("/shared/article", { params });
+    articles.value = res.data.results;
     totalPages.value = res.data.totalPages;
   } catch (err) {
     error.value = err.response?.data || err.message;
@@ -159,21 +158,21 @@ const applyFilters = () => {
   fetchArticles();
 };
 const resetFilters = () => {
-  filters.keywords = '';
+  filters.keywords = "";
   filters.categories = [];
-  filters.tagsInput = '';
+  filters.tagsInput = "";
   page.value = 1;
   fetchArticles();
 };
 
-const changePage = p => {
+const changePage = (p) => {
   page.value = p;
   fetchArticles();
 };
 
 // refetch on sort change
 watch(
-  () => [sorting.sortBy, sorting.sortOrder],
+  () => [filters.sortBy, filters.sortOrder],
   () => {
     page.value = 1;
     fetchArticles();
@@ -191,9 +190,9 @@ onMounted(fetchArticles);
 
 /* Sidebar */
 .filter-bar {
-  flex: 0 0 220px;
+  flex: 1;
   background: var(--background-secondary);
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 8px;
 }
 .filter-bar h2 {
@@ -201,6 +200,15 @@ onMounted(fetchArticles);
 }
 .filter-group {
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-input,
+.filter-select {
+  width: 100%;
+  padding: 0.25rem 0;
 }
 .filter-group label {
   font-weight: bold;
@@ -228,7 +236,7 @@ onMounted(fetchArticles);
 
 /* Main */
 .results-section {
-  flex: 1;
+  flex: 5;
   display: flex;
   flex-direction: column;
 }
@@ -265,7 +273,6 @@ onMounted(fetchArticles);
   height: auto;
   vertical-align: middle;
   border-radius: 4px;
-  
 }
 .article-card section {
   width: 80%;
@@ -283,25 +290,27 @@ onMounted(fetchArticles);
   font-size: 0.9rem;
 }
 
-.read-more {
-  flex: 0;
-  width: auto;
+.article-card section .read-more {
+  padding: 0.5rem;
+  text-align: center;
+  width: 30%;
 }
-
 
 /* Pagination */
 .pagination {
   display: flex;
-  gap: 1rem;
-  align-self: center;
-  margin: 1rem 0;
-}
-.pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
 }
 
-/* Status */
+.pagination button {
+  all: unset;
+  cursor: pointer;
+  padding: 6px 12px;
+}
+
 .status {
   text-align: center;
   padding: 1rem;
@@ -310,7 +319,6 @@ onMounted(fetchArticles);
   color: #f44336;
 }
 
-/* Hover lift & shadow on cards */
 .article-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -319,18 +327,22 @@ onMounted(fetchArticles);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Responsive tweaks */
 @media (max-width: 768px) {
-  .articles-page {
-    flex-direction: column;
-  }
-  .filter-bar {
-    flex: 1 1 auto;
-    margin-bottom: 1rem;
+  .filter-bar{
+    flex: 0 0 125px;
   }
   .articles-grid {
     padding: 0 0.5rem;
   }
+  .article-card{
+    height: auto;
+    padding: 0.5rem;
+  }
+  .article-card img{
+    width: 30%;
+  }
+  .article-card section .read-more{
+    padding: 0.25rem;
+  }
 }
-
 </style>

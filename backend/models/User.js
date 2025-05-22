@@ -1,51 +1,79 @@
-const { Schema, model } = require('mongoose');
-const { hash, compare } = require('bcryptjs');
-const UserCounter = require('./UserCounter');
+const { Schema, model } = require("mongoose");
+const { hash, compare } = require("bcryptjs");
+const UserCounter = require("./UserCounter");
 
-const UserSchema = new Schema({
-    userId: { 
-      type: Number, unique: true, minlength: 3, maxlength: 30
+const UserSchema = new Schema(
+  {
+    userId: {
+      type: Number,
+      unique: true,
+      minlength: 3,
+      maxlength: 30,
     },
-    username: { 
-      type: String, required: true, unique: true, trim: true 
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
     },
-    email: { 
-      type: String, required: true, unique: true, trim: true, lowercase: true,
-      match: [/.+@.+\..+/, 'Please fill a valid email address']
+    bio: {
+      type: String,
+      maxlength: 100,
     },
-    password: { 
-      type: String, required: true, select: false
-     },
-    role: { 
-      type: String, 
-      enum: ['admin', 'user'], default: 'user', 
-      required: true }
-}, { timestamps: true })
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      match: [/.+@.+\..+/, "Please fill a valid email address"],
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+      required: true,
+    },
+    imageUrl: {
+      type: String,
+      validate: {
+        validator: function (v) {
+          return /^(http|https):\/\/[^ "]+$/.test(v);
+        },
+        message: (props) => `${props.value} is not a valid URL!`,
+      },
+    },
+  },
+  { timestamps: true }
+);
 
-
-UserSchema.pre('save', async function (next) {
-    if (this.isModified('password')){
-      this.password = await hash(this.password, 10);
+UserSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await hash(this.password, 10);
+  }
+  if (this.isNew) {
+    try {
+      const counter = await UserCounter.findByIdAndUpdate(
+        { _id: "userId" },
+        { $inc: { seq: 1 } },
+        { upsert: true, new: true }
+      );
+      this.userId = counter.seq;
+    } catch (error) {
+      return next(error);
     }
-    if (this.isNew) {
-      try {
-          const counter = await UserCounter.findByIdAndUpdate(
-              { _id: 'userId' },
-              { $inc: { seq: 1 } },
-              { upsert: true, new: true }
-          );
-          this.userId = counter.seq;
-      } catch (error) {
-          return next(error);
-      }
   }
   next();
-})
+});
 
 UserSchema.methods.matchPassword = async function (password) {
-    return await compare(password, this.password);
+  return await compare(password, this.password);
 };
 
-
-const User = model('User', UserSchema);
+const User = model("User", UserSchema);
 module.exports = User;

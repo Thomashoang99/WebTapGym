@@ -45,6 +45,12 @@ const routes = [
             name: 'ProgressTracking',
             component: () => import('../pages/user/progress-tracking.vue'),
             meta: { requiresAuth: true }
+          },
+          {
+            path: 'profile',
+            name: 'Profile',
+            component: () => import('../pages/user/profile.vue'),
+            meta: { requiresAuth: true }
           }
         ]
     },

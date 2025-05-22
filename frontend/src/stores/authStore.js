@@ -35,9 +35,16 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = data;
   };
 
+  const rehydrate = async () => {
+    if (isLoggedIn){
+      const { data } = await api.get('/user/profile')
+      user.value = data;
+    }
+  }
+
   return {
     token, user, isLoggedIn,
-    login, logout, setUser
+    login, logout, setUser, rehydrate
   };
 }, 
 {

@@ -44,7 +44,7 @@ function onClick() {
 
 <style scoped>
 .exercise-card {
-    padding: 0.5rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     border: 1px solid var(--text-secondary);

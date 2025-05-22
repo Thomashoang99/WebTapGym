@@ -37,14 +37,15 @@ watch(
 <style scoped>
 .nav-section {
     position: fixed;
-    width: 100vw; height: 8vh;
+    width: 100vw; height: 7vh;
     top: 0; left: 0;
+    z-index: 1000;
 }
 
 .content-area {
     position: fixed;
     width: 100vw;
-    top: 8vh;
+    top: 7vh;
     bottom: 0;
     overflow-y: scroll;
     scrollbar-width: thin;

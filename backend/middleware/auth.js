@@ -11,11 +11,7 @@ async function auth(req, res, next) {
     if (!user) 
       return res.status(401).json({ message: 'Invalid user' });
 
-    req.user = {
-      _id: user._id,
-      role: user.role,
-      userId: user.userId
-    };
+    req.user = user;
     next();
   } catch (err) {
     res.status(403).json({ error: 'Invalid token' });

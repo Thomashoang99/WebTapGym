@@ -46,8 +46,8 @@
       </div>
 
       <div class="filter-actions">
-        <button @click="applyFilters">Apply</button>
-        <button class="reset" @click="resetFilters">Reset</button>
+        <button class="button-primary" @click="applyFilters">Apply</button>
+        <button class="button-secondary" @click="resetFilters">Reset</button>
       </div>
     </aside>
 
@@ -100,13 +100,13 @@
         </div>
       </div>
 
-      <div class="pagination">
-        <button :disabled="page === 1" @click="changePage(page - 1)">
-          Prev
+     <div class="pagination">
+        <button  @click="prevPage" :disabled="page === 1">
+          ◄
         </button>
-        <span>Page {{ page }} of {{ totalPages }}</span>
-        <button :disabled="page === totalPages" @click="changePage(page + 1)">
-          Next
+        <span> {{ page }} / {{ totalPages }} </span>
+        <button @click="nextPage" :disabled="page === totalPages">
+          ►
         </button>
       </div>
 
@@ -243,7 +243,7 @@ onMounted(() => {
 /* Sidebar */
 .filter-bar {
   flex: 1;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 4px;
   box-shadow: 0 0 4px rgba(0,0,0,0.05);
   height: 100vh;

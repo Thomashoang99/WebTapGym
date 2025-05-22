@@ -205,7 +205,7 @@ function nextPage() {
   min-height: 100vh;
   align-self: flex-start;
   flex: 1;
-  padding: 16px;
+  padding: 0.5rem;
   border-right: 1px solid #ddd;
   border-radius: 8px;
   background: var(--background-secondary);
