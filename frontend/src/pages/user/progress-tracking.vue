@@ -123,7 +123,7 @@ onMounted(fetchProgress);
 
 <style scoped>
 .header {
-    margin: 1rem 0;
+    margin: 0.5rem 0;
 }
 .progress-tracking-page {
   display: flex;

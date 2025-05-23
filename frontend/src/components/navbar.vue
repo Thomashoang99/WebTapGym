@@ -20,6 +20,12 @@
         to="/progress-tracking"
         >Progress Tracker</router-link
       >
+      <router-link
+        v-if="authStore.isLoggedIn"
+        class="nav-link button-primary"
+        to="/health-tracking">
+        Body Tracker
+      </router-link>
     </div>
     <div role="button" @click="toggleTooltip" class="login">
       <img class="profile-picture" v-if="authStore.isLoggedIn" :src="authStore.user.imageUrl">

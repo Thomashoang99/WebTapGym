@@ -47,6 +47,12 @@ const routes = [
             meta: { requiresAuth: true }
           },
           {
+            path: 'health-tracking',
+            name: 'HealthTracking',
+            component: () => import('../pages/user/health-tracking.vue'),
+            meta: { requiresAuth: true }
+          },
+          {
             path: 'profile',
             name: 'Profile',
             component: () => import('../pages/user/profile.vue'),

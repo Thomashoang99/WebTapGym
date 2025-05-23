@@ -8,7 +8,7 @@ router.use('/user/bookmark', require('./user/bookmark'));
 router.use('/user/purchase', require('./user/purchase'));
 router.use('/user/program', require('./user/program'));
 router.use('/user/profile', require('./user/profile'));
-
+router.use('/user/metric', require('./user/metric'));
 
 router.use('/admin/auth', require('./admin/auth')); 
 router.use('/admin/article', require('./admin/article')); 
