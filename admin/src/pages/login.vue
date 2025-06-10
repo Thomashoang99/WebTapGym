@@ -1,20 +1,20 @@
 <template>
   <div class="wrapper">
     <div class="container">
-        <h2>ĐĂNG NHẬP ADMIN</h2>
+        <h2>ADMIN LOGIN</h2>
         <form>
 
         <div class="input-group">
             <label>Email:</label>
-            <input v-model="email" placeholder="Nhập địa chỉ email..." type="email" required />
+            <input v-model="email" placeholder="Email..." type="email" required />
         </div>
 
         <div class="input-group">
-            <label>Mật khẩu:</label>
-            <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
+            <label>Password:</label>
+            <input v-model="password" placeholder="Password..." type="password" required />
         </div>
         
-        <button type="button" @click="handleLogin">Đăng nhập</button>
+        <button type="button" @click="handleLogin">Login</button>
         <p v-if="error" class="error">{{ error }}</p>
         </form>
     </div>
@@ -36,7 +36,7 @@
       await auth.login({ 
         email: email.value, 
         password: password.value });
-      console.log('Đăng nhập thành công. Đang chuyển hướng về trang admin...');
+      console.log('Successful login');
       router.push('/admin');
     } catch (err) {
       console.log(err.response?.data?.message);

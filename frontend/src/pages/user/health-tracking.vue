@@ -14,7 +14,9 @@
         <tr>
           <th>Date</th>
           <th>Weight &#40;kg&#41;</th>
-          <th>Body fat &#40;%&#41;</th>
+          <th>Height &#40;cm&#41;</th>
+          <th>BMI</th>
+          <th>Body Status</th>
           <th class="col-actions">Actions</th>
         </tr>
       </thead>
@@ -22,7 +24,9 @@
         <tr v-for="e in entries" :key="e._id">
           <td>{{ formatDate(e.date) }}</td>
           <td>{{ e.weight }}</td>
-          <td>{{ e.bodyFat }}</td>
+          <td>{{ e.height }}</td>
+          <td>{{ e.bmi }}</td>
+          <td>{{ getBodyStatus(e.bmi) }}</td>
           <td class="row-actions">
             <button class="data-btn btn-edit" @click="openModal(e)">Edit</button>
             <button class="data-btn btn-delete" @click="remove(e._id)">Delete</button>
@@ -69,6 +73,24 @@ async function remove(id) {
   if (!confirm("Delete this entry?")) return;
   await api.delete(`/user/metric/${id}`);
   reload();
+}
+
+function getBodyStatus(bmi) {
+  if (typeof bmi !== 'number' || isNaN(bmi)) {
+    return 'Invalid BMI';
+  }
+
+  if (bmi < 18.5) {
+    return 'Underweight';
+  } else if (bmi < 24.9) {
+    return 'Normal';
+  } else if (bmi < 29.9) {
+    return 'Overweight';
+  } else if (bmi < 39.9) {
+    return 'Obesity';
+  } else {
+    return 'Severe obesity';
+  }
 }
 
 onMounted(reload);
@@ -147,7 +169,7 @@ td {
   .table{
     font-size: 1rem;
   }
-  thead>tr {
+  thead {
   position: static;
 }
 }

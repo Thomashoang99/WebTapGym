@@ -20,12 +20,13 @@
 
 <script setup>
 import { computed, defineProps } from 'vue';
-
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
     exercise: { type: Object, required: true }
 });
 
+const router = useRouter();
 const truncateLimit = 100;
 const formattedDescription = computed(() => {
     return props.exercise.description.length > truncateLimit ?
@@ -38,7 +39,7 @@ const formattedBodyParts = computed(() => {
 });
 
 function onClick() {
-    alert('Button clicked');
+    router.push(`/exercises/details/${props.exercise._id}`)
 };
 </script>
 

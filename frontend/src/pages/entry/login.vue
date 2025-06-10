@@ -1,24 +1,24 @@
 <template>
   <div class="wrapper">
     <div class="container">
-        <h2>ĐĂNG NHẬP</h2>
+        <h2>LOGIN</h2>
         <form>
 
         <div class="input-group">
             <label>Email:</label>
-            <input v-model="email" placeholder="Nhập địa chỉ email..." type="email" required />
+            <input v-model="email" placeholder="Email address..." type="email" required />
         </div>
 
         <div class="input-group">
-            <label>Mật khẩu:</label>
-            <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
+            <label>Password:</label>
+            <input v-model="password" placeholder="Password..." type="password" required />
         </div>
         
-        <button type="button" @click="handleLogin">Đăng nhập</button>
+        <button type="button" @click="handleLogin">Login</button>
         <p v-if="error" class="error">{{ error }}</p>
         <div class="optional">
-          <p class="prompt">Chưa có tài khoản? <router-link to="./register">Đăng ký</router-link></p>
-          <p class="prompt"><router-link to="./password-recovery">Đổi mật khẩu</router-link></p>
+          <p class="prompt">No account yet? <router-link to="./register">Register</router-link></p>
+          <p class="prompt"><router-link to="./password-recovery">Change password...</router-link></p>
         </div>
         </form>
     </div>
@@ -40,10 +40,11 @@
       await auth.login({ 
         email: email.value, 
         password: password.value });
-      console.log('Đăng nhập thành công. Đang chuyển hướng về trang chủ...');
+      console.log('Successful login');
       router.push('/home');
     } catch (err) {
-      console.log(err.response?.data?.message);
+      error.value = err.response?.data?.message;
+      console.log(error.value);
     }
   }
 </script>

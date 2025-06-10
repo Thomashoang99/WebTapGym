@@ -34,31 +34,34 @@
         <input class="filter-input" v-model="filters.createdTo" type="date" />
       </div>
 
+      <div class="filter-group">
+        <h3>Sort by</h3>
+          <select class="filter-input" v-model="filters.sortBy">
+            <option value="title">Title</option>
+            <option value="createdAt">Date</option>
+          </select>
+      </div>
+      <div class="filter-group">
+        <h3>Order</h3>
+          <select class="filter-input" v-model="filters.sortOrder">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+
+      </div>
+
       <!-- Apply / Reset -->
       <div class="filter-actions">
         <button class="button-primary" @click="applyFilters">Apply</button>
         <button class="button-secondary" @click="resetFilters">Reset</button>
       </div>
+
+      
     </aside>
 
     <!-- Main Content -->
     <section class="results-section">
-      <div class="sort-bar">
-        <label>
-          Sort by
-          <select v-model="filters.sortBy">
-            <option value="title">Title</option>
-            <option value="createdAt">Date</option>
-          </select>
-        </label>
-        <label>
-          Order
-          <select v-model="filters.sortOrder">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </select>
-        </label>
-      </div>
+
 
       <!-- Articles Grid -->
       <div class="articles-grid">
@@ -239,6 +242,7 @@ onMounted(fetchArticles);
   flex: 5;
   display: flex;
   flex-direction: column;
+  padding-top: 1rem;
 }
 
 /* Sort bar */

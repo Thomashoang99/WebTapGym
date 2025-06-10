@@ -1,26 +1,26 @@
 <template>
   <div class="wrapper">
 <div class="container">
-    <h2>ĐĂNG KÝ</h2>
+    <h2>REGISTER</h2>
     <form>
       <div class="input-group">
-        <label>Tên người dùng:</label>
-        <input v-model="username" placeholder="Nhập tên người dùng..." type="text" required />
+        <label>Username</label>
+        <input v-model="username" placeholder="Username..." type="text" required />
       </div>
 
       <div class="input-group">
         <label>Email:</label>
-        <input v-model="email" placeholder="Nhập địa chỉ email..." type="email" required />
+        <input v-model="email" placeholder="Email..." type="email" required />
       </div>
 
       <div class="input-group">
-        <label>Mật khẩu:</label>
-        <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
+        <label>Password:</label>
+        <input v-model="password" placeholder="Password..." type="password" required />
       </div>
 
-      <button type="button" @click="handleRegister">Đăng ký</button>
+      <button type="button" @click="handleRegister">Register</button>
       <p v-if="error" class="error">{{ error }}</p>
-      <p class="loginPrompt">Đã có tài khoản? <router-link to="./login">Đăng nhập</router-link></p>
+      <p class="loginPrompt">Got an account? <router-link to="./login">Login</router-link></p>
     </form>
   </div>
   </div>
@@ -44,7 +44,7 @@ const handleRegister = async () => {
       email: email.value,
       password: password.value,
     })
-    success.value = 'Đăng ký người dùng thành công. Chuyển hướng về trang đăng nhập...'
+    success.value = 'Successful registration'
     console.log(success.value);
     router.push('/login');
   } catch (err) {

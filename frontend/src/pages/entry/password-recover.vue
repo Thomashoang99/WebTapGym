@@ -1,25 +1,25 @@
 <template>
   <div class="wrapper">
     <div class="container">
-      <h2>LẤY LẠI MẬT KHẨU</h2>
+      <h2>CHANGE PASSWORD</h2>
       <form @submit.prevent="handlePasswordChange">
         <div class="input-group">
-          <label>Địa chỉ email:</label>
-          <input v-model="email" placeholder="Nhập tên người dùng..." type="text" required />
+          <label>Email:</label>
+          <input v-model="email" placeholder="Your email..." type="text" required />
         </div>
 
 
         <div class="input-group">
-          <label>Mật khẩu:</label>
-          <input v-model="password" placeholder="Nhập mật khẩu..." type="password" required />
+          <label>New password:</label>
+          <input v-model="password" placeholder="New password..." type="password" required />
         </div>
 
         <div class="input-group">
-          <label>Nhập lại mật khẩu:</label>
-          <input v-model="passwordReenter" placeholder="Nhập lại mật khẩu..." type="password" required />
+          <label>Reenter password:</label>
+          <input v-model="passwordReenter" placeholder="Reenter password..." type="password" required />
         </div>
 
-        <button type="submit">Đổi mật khẩu</button>
+        <button type="submit">Change password</button>
         <span style="text-align: center; color: red" v-if="error">{{ error  }}</span>
         <span style="text-align: center; color: cyan" v-if="success">{{ success  }}</span>
       </form>
@@ -46,17 +46,17 @@ const handlePasswordChange = async () => {
             newPassword: password.value,
         })
         error.value = '';
-        success.value = 'Đổi mật khẩu thành công';
+        success.value = 'Done changing password';
         router.push('/login');
     }
     else {
         success.value = '';
-        error.value = "Mật khẩu không trùng khớp";
+        error.value = "Mismatch password";
         return;
     }
   } catch (err) {
     success.value = '';
-    error.value = err.response?.data?.message || "Đổi mật khẩu thất bại!";
+    error.value = err.response?.data?.message || "Failed to change password";
     console.log(error.value)
   }
 } 

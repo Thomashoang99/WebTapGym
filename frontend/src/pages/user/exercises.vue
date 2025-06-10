@@ -87,7 +87,7 @@ import { ref, onMounted, watch } from 'vue';
 import api from '../../api';
 import Card from '../../components/card.vue';
 
-// Filter and sort options
+
 const bodyPartOptions = [
   'Full Body',
   'Back',
@@ -118,7 +118,6 @@ const sortOrderOptions = [
   { label: 'Descending', value: 'desc' }
 ];
 
-// Reactive state
 const selectedBodyParts = ref([]);
 const selectedEquipment = ref('');
 const selectedDifficulty = ref('');
@@ -126,7 +125,7 @@ const selectedSortBy = ref('createdAt');
 const selectedSortOrder = ref('desc');
 const currentPage = ref(1);
 const totalPages = ref(1);
-const pageSize = ref(10);
+const pageSize = ref(8);
 
 const exercises = ref([]);
 const loading = ref(false);
@@ -179,10 +178,10 @@ watch(
   }
 );
 
-// Watch page changes to refetch
+
 watch(currentPage, fetchExercises);
 
-// Pagination handlers
+
 function prevPage() {
   if (currentPage.value > 1) currentPage.value--;
 }

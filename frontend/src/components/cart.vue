@@ -102,7 +102,7 @@ onMounted(fetchCartItems);
 <style scoped>
 .cart-sidebar {
   position: fixed;
-  top: 8vh;
+  top: 7vh;
   right: -320px;
   width: 300px;
   bottom: 0;

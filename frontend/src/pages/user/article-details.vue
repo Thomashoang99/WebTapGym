@@ -14,7 +14,7 @@
 
       <div class="article-content" v-html="article.content"></div>
 
-      <router-link to="/articles" class="button-secondary back-btn">
+      <router-link to="/articles" class="button-primary">
         ← Back to Articles
       </router-link>
     </section>

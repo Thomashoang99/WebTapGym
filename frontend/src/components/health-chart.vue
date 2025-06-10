@@ -40,8 +40,8 @@ function buildData() {
         yAxisID: "y",
       },
       {
-        label: "Body fat",
-        data: props.entries.map((e) => e.bodyFat).reverse(),
+        label: "BMI",
+        data: props.entries.map((e) => e.bmi).reverse(),
         borderColor: fatColor,
         backgroundColor: fatColor + "33",
         fill: false,
@@ -53,15 +53,15 @@ function buildData() {
   };
 }
 
-// Option B: compute dynamic axis ranges
+
 function computeOptions() {
   const weights = props.entries.map((e) => e.weight);
-  const bodyFats = props.entries.map((e) => e.bodyFat);
+  const bmi = props.entries.map((e) => e.bmi);
 
-  const wMin = Math.floor(Math.max(0, Math.min(...weights) - 2) / 2) * 2;
-  const wMax = Math.ceil((Math.max(...weights) + 2) / 2) * 2;
-  const fMin = Math.floor(Math.max(0, Math.min(...bodyFats) - 1));
-  const fMax = Math.ceil(Math.min(50, Math.max(...bodyFats) + 1));
+  const wMin = Math.floor(Math.max(0, Math.min(...weights) - 1) / 1);
+  const wMax = Math.ceil((Math.max(...weights) + 1) / 1);
+  const bMin = Math.max(0, Math.min(...bmi) - 0.5);
+  const bMax = Math.min(50, Math.max(...bmi) + 0.5);
 
   return {
     responsive: true,
@@ -126,7 +126,7 @@ function computeOptions() {
         position: "right",
         title: {
           display: true,
-          text: "Body fat (%)",
+          text: "BMI",
           color: textColor,
           font: { size: 16 },
         },
@@ -140,8 +140,8 @@ function computeOptions() {
           color: gridColor,
           drawBorder: false
         },
-        min: fMin,
-        max: fMax,
+        min: bMin,
+        max: bMax,
       },
     },
   };

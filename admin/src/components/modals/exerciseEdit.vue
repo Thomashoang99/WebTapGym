@@ -2,26 +2,22 @@
   <div class="exercise-form-page">
     <h3 class="header">{{ props.readOnly ? 'View ' : (isEditing ? 'Edit ' : 'New ') }}Exercise</h3>
     <form @submit.prevent="save" enctype="multipart/form-data">
-      <!-- Name -->
       <div class="field">
         <h5>Name</h5>
         <input type="text" v-model="form.name" :disabled="props.readOnly" required />
       </div>
 
-      <!-- Description -->
       <div class="field">
         <h5>Description</h5>
         <textarea v-model="form.description" :disabled="props.readOnly" required></textarea>
       </div>
 
-      <!-- Image Upload -->
       <div class="field">
         <h5>Image</h5>
         <input type="file" @change="onFileChange" :disabled="props.readOnly" accept="image/*" />
         <img v-if="preview" :src="preview"  class="preview-img" />
       </div>
 
-      <!-- Body Parts -->
       <div class="field">
         <h5>Body Parts</h5>
         <div class="checkbox-list">
@@ -32,7 +28,6 @@
         </div>
       </div>
 
-      <!-- Equipment -->
       <div class="field">
         <h5>Equipment</h5>
         <select v-model="form.equipment" :disabled="props.readOnly" required>
@@ -41,7 +36,6 @@
         </select>
       </div>
 
-      <!-- Difficulty -->
       <div class="field">
         <h5>Difficulty</h5>
         <select v-model="form.difficulty" :disabled="props.readOnly" required>
@@ -50,14 +44,12 @@
         </select>
       </div>
 
-      <!-- Video URL -->
       <div class="field">
         <h5>Video URL</h5>
         <input v-model="form.videoUrl" type="url" :disabled="props.readOnly" placeholder="https://..." />
       </div>
 
-      <!-- Actions -->
-      <button class="button-primary" type="submit" :disabled="saving">
+      <button v-if="!props.readOnly" class="button-primary" type="submit" :disabled="saving">
         {{ saving ? 'Saving…' : isEditing ? 'Update' : 'Create' }}
       </button>
       <button class="button-secondary" type="button" @click="emit('close')">

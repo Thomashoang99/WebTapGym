@@ -1,17 +1,25 @@
 const express = require("express");
 const auth = require("../../middleware/auth");
-const HealthMetric = require("../../models/Metric");
+const Metric = require("../../models/Metric");
 
 const router = express.Router();
 
 router.get('/', auth, async (req, res) => {
   try {
-    const entries = await HealthMetric.find({ user: req.user._id }).sort({
+    const { startDate, endDate } = req.query;
+    const filters = {};
+    filters.user = req.user._id;
+    if (startDate || endDate) {
+      filters.date = {};
+      if (startDate) filters.date.$gte = new Date(startDate);
+      if (endDate)   filters.date.$lte = new Date(endDate);
+    }
+    const entries = await Metric.find(filters).sort({
       date: -1,
     });
     res.json(entries);
   } catch (err) {
-    console.err(err);
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -19,12 +27,12 @@ router.get('/', auth, async (req, res) => {
 router.post('/', auth, async (req, res) => {
   try {
     console.log(req.body);
-    const { date, weight, bodyFat } = req.body;
-    const entry = await HealthMetric.create({
+    const { date, weight, height } = req.body;
+    const entry = await Metric.create({
       user: req.user._id,
       date: date,
       weight: weight,
-      bodyFat: bodyFat,
+      height: height,
     });
     res.status(201).json(entry);
   } catch (err) {
@@ -36,7 +44,7 @@ router.post('/', auth, async (req, res) => {
 // PUT to update an existing entry
 router.put('/:id', auth, async (req, res) => {
   try {
-    const entry = await HealthMetric.findOneAndUpdate(
+    const entry = await Metric.findOneAndUpdate(
       {
         _id: req.params.id,
         user: req.user._id,
@@ -55,7 +63,7 @@ router.put('/:id', auth, async (req, res) => {
 // DELETE an entry
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const result = await HealthMetric.deleteOne({
+    const result = await Metric.deleteOne({
       _id: req.params.id,
       user: req.user._id,
     });

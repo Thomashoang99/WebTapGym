@@ -5,7 +5,7 @@
 
       <div class="filter-group">
         <h3>Search</h3>
-        <input
+        <input class="filter-select"
           id="keywords"
           v-model="filters.keywords"
           type="text"
@@ -15,7 +15,11 @@
 
       <div class="filter-group">
         <h3>Difficulty</h3>
-        <select id="difficulty" v-model="filters.difficulty" class="filter-select">
+        <select
+          id="difficulty"
+          v-model="filters.difficulty"
+          class="filter-select"
+        >
           <option value="">All</option>
           <option v-for="d in difficulties" :key="d" :value="d">
             {{ d }}
@@ -25,7 +29,10 @@
 
       <div class="filter-group">
         <h3>
-          Max Duration: {{ filters.durationMax }} wk<span v-if="filters.durationMax>1">s</span>
+          Max Duration: {{ filters.durationMax }} wk<span
+            v-if="filters.durationMax > 1"
+            >s</span
+          >
         </h3>
         <input
           id="durationMax"
@@ -45,6 +52,22 @@
         </select>
       </div>
 
+      <div class="filter-group">
+        <h3>Sort by</h3>
+        <select class="filter-select" v-model="sorting.sortBy">
+          <option value="name">Name</option>
+          <option value="price">Price</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <h3>Order</h3>
+        <select class="filter-select" v-model="sorting.sortOrder">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+      </div>
+
       <div class="filter-actions">
         <button class="button-primary" @click="applyFilters">Apply</button>
         <button class="button-secondary" @click="resetFilters">Reset</button>
@@ -58,35 +81,22 @@
         </button>
       </div>
 
-      <div class="sort-bar">
-        <label>
-          Sort by
-          <select v-model="sorting.sortBy">
-            <option value="name">Name</option>
-            <option value="price">Price</option>
-          </select>
-        </label>
-        <label>
-          Order
-          <select v-model="sorting.sortOrder">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </select>
-        </label>
-      </div>
-
       <div class="programs-grid">
         <div
           v-for="prog in programs"
-          :key="prog._id" class="program-card"
-          :class="{ 'buy': prog.isPaid && !prog.purchased }"
+          :key="prog._id"
+          class="program-card"
+          :class="{ buy: prog.isPaid && !prog.purchased }"
         >
           <h3>{{ prog.name }}</h3>
-          <p class="duration">{{ prog.duration }} wk<span v-if="prog.duration>1">s</span></p>
+          <p class="duration">
+            {{ prog.duration }} wk<span v-if="prog.duration > 1">s</span>
+          </p>
           <p class="difficulty">{{ prog.difficulty }}</p>
           <button
             v-if="!prog.isPaid || prog.purchased"
-            @click="viewDetails(prog._id)" class="button-primary"
+            @click="viewDetails(prog._id)"
+            class="button-primary"
           >
             View Details
           </button>
@@ -100,14 +110,10 @@
         </div>
       </div>
 
-     <div class="pagination">
-        <button  @click="prevPage" :disabled="page === 1">
-          ◄
-        </button>
+      <div class="pagination">
+        <button @click="prevPage" :disabled="page === 1">◄</button>
         <span> {{ page }} / {{ totalPages }} </span>
-        <button @click="nextPage" :disabled="page === totalPages">
-          ►
-        </button>
+        <button @click="nextPage" :disabled="page === totalPages">►</button>
       </div>
 
       <div v-if="loading" class="status">Loading…</div>
@@ -117,29 +123,30 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useAuthStore } from '../../stores/authStore';
-import { useCartStore } from '../../stores/cartStore';
-import api from '../../api';
-import { formatNumber } from '../../utils/helper';
+import { ref, reactive, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "../../stores/authStore";
+import { useCartStore } from "../../stores/cartStore";
+import api from "../../api";
+import { formatNumber } from "../../utils/helper";
 
-const router    = useRouter(); const route = useRoute();
+const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 
-const difficulties = ['Beginner', 'Intermediate', 'Advanced'];
+const difficulties = ["Beginner", "Intermediate", "Advanced"];
 
 const filters = reactive({
-  keywords: '',
-  difficulty: '',
+  keywords: "",
+  difficulty: "",
   durationMax: 16,
-  isPaid: ''
+  isPaid: "",
 });
 
 const sorting = reactive({
-  sortBy: 'name',
-  sortOrder: 'asc'
+  sortBy: "name",
+  sortOrder: "asc",
 });
 
 const page = ref(1);
@@ -152,7 +159,7 @@ const error = ref(null);
 
 const fetchPrograms = async () => {
   loading.value = true;
-  error.value   = null;
+  error.value = null;
   try {
     const params = {
       page: page.value,
@@ -162,17 +169,17 @@ const fetchPrograms = async () => {
       keywords: filters.keywords || undefined,
       difficulty: filters.difficulty || undefined,
       durationMax: filters.durationMax || undefined,
-      isPaid: filters.isPaid !== '' ? filters.isPaid : undefined
+      isPaid: filters.isPaid !== "" ? filters.isPaid : undefined,
     };
 
-    const res = await api.get('/shared/program', { params });
+    const res = await api.get("/shared/program", { params });
     let list = res.data.results;
 
     if (!authStore.isLoggedIn) {
-      list = list.filter(p => !p.isPaid);
+      list = list.filter((p) => !p.isPaid);
     }
 
-    programs.value   = list;
+    programs.value = list;
     totalPages.value = res.data.totalPages;
   } catch (err) {
     error.value = err.response?.data?.error || err.message;
@@ -186,25 +193,25 @@ const applyFilters = () => {
   fetchPrograms();
 };
 const resetFilters = () => {
-  filters.keywords = '';
-  filters.difficulty = '';
+  filters.keywords = "";
+  filters.difficulty = "";
   filters.durationMax = 16;
-  filters.isPaid = '';
+  filters.isPaid = "";
   page.value = 1;
   fetchPrograms();
 };
 
-const changePage = p => {
+const changePage = (p) => {
   page.value = p;
   fetchPrograms();
 };
 
-const viewDetails = id => {
-  router.push(`/programs/details/${id}`)
+const viewDetails = (id) => {
+  router.push(`/programs/details/${id}`);
 };
-const buyProgram = id => {
-  const program = programs.value.find(p => p._id === id);
-  if (program){
+const buyProgram = (id) => {
+  const program = programs.value.find((p) => p._id === id);
+  if (program) {
     cartStore.addToCart(program);
   }
 };
@@ -217,18 +224,15 @@ watch(
   }
 );
 
-watch(route.query.payment, (paymentStatus) => {
-
-})
+watch(route.query.payment, (paymentStatus) => {});
 onMounted(() => {
   fetchPrograms();
   const { payment } = route.query;
-  if (payment === 'success'){
+  if (payment === "success") {
     cartStore.clearCart();
-    alert('Purchase successful!');
-  }
-  else if (payment === 'failed') {
-     alert('Purchase failed!');
+    alert("Purchase successful!");
+  } else if (payment === "failed") {
+    alert("Purchase failed!");
   }
 });
 </script>
@@ -245,7 +249,7 @@ onMounted(() => {
   flex: 1;
   padding: 0.5rem;
   border-radius: 4px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.05);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
   height: 100vh;
   background: var(--background-secondary);
   border-radius: 8px;
@@ -290,7 +294,7 @@ onMounted(() => {
 .guest-prompt button {
   padding: 0.5rem 1rem;
   border: none;
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -314,8 +318,9 @@ onMounted(() => {
 /* Grid */
 .programs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
+  padding-top: 1rem;
 }
 .program-card {
   padding: 1rem;
@@ -347,7 +352,7 @@ onMounted(() => {
   scale: 1.02;
 }
 
-button.buy{
+button.buy {
   text-transform: uppercase;
 }
 

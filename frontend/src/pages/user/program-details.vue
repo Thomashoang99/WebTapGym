@@ -23,10 +23,16 @@
 
         <h2>Exercises List</h2>
         <ul class="exercise-list">
-          <li v-for="(ex, index) in program.exercises" :key="ex._id" class="exercise">
-            <h2><span>{{ index + 1 }} </span>. {{ ex.exercise.name }}</h2>
+          <li
+            v-for="(ex, index) in program.exercises"
+            :key="ex._id"
+            class="exercise"
+          >
+            <h2>
+              <span>{{ index + 1 }} </span>. {{ ex.exercise.name }}
+            </h2>
             <p>Sets: {{ ex.sets }}, Reps: {{ ex.reps }}</p>
-            <iframe           
+            <iframe
               v-if="ex.exercise.videoUrl"
               :src="ex.exercise.videoUrl.replace('watch?v=', 'embed/')"
               loading="lazy"
@@ -36,7 +42,7 @@
         </ul>
 
         <!-- Notes & Progress -->
-        <div class="progress-section">
+        <div v-if="auth.isLoggedIn" class="progress-section">
           <h2>User Notes</h2>
 
           <label for="prog-notes">Notes</label>
@@ -44,7 +50,7 @@
             id="prog-notes"
             v-model="form.notes"
             placeholder="Write your notes here…"
-            style="resize: vertical;"
+            style="resize: vertical"
           ></textarea>
 
           <label for="prog-level">
@@ -52,12 +58,18 @@
             <input
               id="prog-level"
               type="range"
-              min="0" max="100"
+              min="0"
+              max="100"
               v-model.number="form.progress"
             />
           </label>
 
-          <button class="button-secondary" style="margin-top: 1rem;" @click="saveProgress" :disabled="saving">
+          <button
+            class="button-secondary"
+            style="margin-top: 1rem"
+            @click="saveProgress"
+            :disabled="saving"
+          >
             <span v-if="!saving">Save</span>
             <span v-else>Saving…</span>
           </button>
@@ -70,22 +82,24 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useCartStore } from '../../stores/cartStore';
-import api from '../../api';
+import { ref, reactive, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useCartStore } from "../../stores/cartStore";
+import { useAuthStore } from "../../stores/authStore";
+import api from "../../api";
 
-const route  = useRoute();
+const route = useRoute();
 const router = useRouter();
-const cart   = useCartStore();
+const cart = useCartStore();
+const auth = useAuthStore();
 
 const loading = ref(true);
-const error   = ref('');
+const error = ref("");
 
-const program  = ref(null);
-const form     = reactive({ notes: '', progress: 0 });
-const saving   = ref(false);
-const saveError= ref('');
+const program = ref(null);
+const form = reactive({ notes: "", progress: 0 });
+const saving = ref(false);
+const saveError = ref("");
 
 async function fetchDetails() {
   loading.value = true;
@@ -95,9 +109,10 @@ async function fetchDetails() {
     const resProg = await api.get(`/shared/program/${id}`);
     program.value = resProg.data;
 
-    if (!program.value.isPaid || program.value.purchased) {
+    if (auth.isLoggedIn) {
+      console.log("load");
       const resProgP = await api.get(`/user/program/${id}/progress`);
-      form.notes    = resProgP.data.notes;
+      form.notes = resProgP.data.notes;
       form.progress = resProgP.data.progress;
     }
   } catch (err) {
@@ -109,20 +124,20 @@ async function fetchDetails() {
 
 function addToCart() {
   cart.addToCart(program.value);
-  router.push('/checkout');
+  router.push("/checkout");
 }
 
 async function saveProgress() {
   saving.value = true;
-  saveError.value = '';
+  saveError.value = "";
   try {
     const { id } = route.params;
     const result = await api.put(`/user/program/${id}/progress`, {
-      notes:    form.notes,
-      progress: form.progress
+      notes: form.notes,
+      progress: form.progress,
     });
-    if (result.statusText === 'OK'){
-        alert('Your notes and progress has been saved');
+    if (result.statusText === "OK") {
+      alert("Your notes and progress has been saved");
     }
   } catch (err) {
     saveError.value = err.response?.data?.error || err.message;
@@ -144,11 +159,13 @@ onMounted(fetchDetails);
   text-align: center;
   padding: 2rem;
 }
-.status.error { color: #f44336; }
+.status.error {
+  color: #f44336;
+}
 
 /* Header */
 .detail-header h1 {
-  font-family: 'Oswald', sans-serif;
+  font-family: "Oswald", sans-serif;
   font-size: 2rem;
   margin-bottom: 0.5rem;
 }
@@ -241,7 +258,7 @@ onMounted(fetchDetails);
   background: var(--accent-primary);
   border-radius: 50%;
   border: none;
-  margin-top: -4px; 
+  margin-top: -4px;
   cursor: pointer;
 }
 .progress-section input[type="range"]::-moz-range-thumb {

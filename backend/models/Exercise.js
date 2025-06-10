@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-
+const Program = require('./Program');
 
 const ExerciseSchema = new Schema({
     name: { 
@@ -58,6 +58,16 @@ const ExerciseSchema = new Schema({
 ExerciseSchema.index({ bodyParts: 1 });
 ExerciseSchema.index({ difficulty: 1 });
 ExerciseSchema.index({ equipment: 1 });
+
+//Middleware to remove all instances of a deleted exercise from programs that contain it
+ExerciseSchema.post('findOneAndDelete', async function(deleted) {
+  if (deleted) {
+    await Program.updateMany(
+      { 'exercises.exercise': deleted._id },
+      { $pull: { exercises: { exercise: deleted._id } } }
+    );
+  }
+});
 
 const Exercise = model('Exercise', ExerciseSchema);
 module.exports = Exercise;

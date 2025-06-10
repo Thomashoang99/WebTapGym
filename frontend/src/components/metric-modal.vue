@@ -12,8 +12,8 @@
           <input type="number" v-model.number="form.weight" step="0.1" required />
         </div>
         <div class="field">
-          <label>Body-Fat %</label>
-          <input type="number" v-model.number="form.bodyFat" step="0.1" required />
+          <label>Height (cm)</label>
+          <input type="number" v-model.number="form.height" step="0.1" required />
         </div>
         <button class="button-primary" type="submit">{{ saving ? 'Saving…' : 'Save' }}</button>
         <button class="button-secondary" type="button" @click="close">Cancel</button>
@@ -34,7 +34,7 @@ const emit = defineEmits(['saved', 'close']);
 const form = reactive({
   date: '',
   weight: null,
-  bodyFat: null
+  height: null
 });
 const saving = ref(false);
 
@@ -42,7 +42,7 @@ onMounted(() => {
   if (props.entry) {
     form.date    = props.entry.date.slice(0,10);
     form.weight  = props.entry.weight;
-    form.bodyFat = props.entry.bodyFat;
+    form.height = props.entry.height;
   } else {
     form.date = new Date().toISOString().slice(0,10);
   }

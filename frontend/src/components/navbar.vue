@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="logo">
-      <h1>THE GYM SITE</h1>
+      <router-link class="logo-link" to="/home"><h1>THE GYM SITE</h1></router-link>
     </div>
     <div class="nav-links">
       <router-link class="nav-link button-primary" to="/home">Home</router-link>
@@ -117,6 +117,10 @@ nav > * {
   border-radius: 50%;
 }
 
+.logo-link{
+  text-decoration: none;
+}
+
 .tooltip {
   position: absolute;
   width: 100%;
@@ -177,7 +181,7 @@ nav > * {
   }
   .nav-link {
     font-size: 1rem;
-    padding: 0.5rem 0.75rem;
+    padding: 0.25rem 0.5rem;
   }
 }
 </style>
