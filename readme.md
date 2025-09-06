@@ -1,14 +1,31 @@
 # WebTapGym - Website cho người tập thể hình
 
 ## Tech Stack
-**Frontend:** Vue 3, Pinia, Vue Router, Axios, Quill.js
-**Backend:** Node.js, Express, JWT, Mongoose   
-**Database:** MongoDB  
+**Frontend:** Vue 3, Pinia, Vue Router, Axios, Quill.js    
+**Backend:** Node.js, Express, JWT, Multer    
+**Database:** MongoDB + Mongoose  
+
+## Tính năng:
+### Cho người dùng:
+- Quản lý hồ sơ cá nhân
+- Tìm kiếm và lọc bài tập, chương trình tập luyện, tin tức
+- Ghi chú tiến độ tập luyện theo từng chương trình
+- Ghi chú chiều cao, cân nặng và BMI theo ngày
 
 ## Hướng dẫn cài đặt
-1. Vào thư mục của project, gõ "cmd" vào thanh tìm kiếm
-2. Cài đặt dependencies bằng câu lệnh: "npm run install"
-3. Seed dữ liệu cho backend bằng câu lệnh: "cd backend" -> "node seeds/master.js"
-4. Chạy backend bằng câu lệnh "npm run dev"
-5. Mở Terminal mới, chạy frontend cho người dùng bằng câu lệnh: "cd frontend" -> "npm run dev"
-6. Mở Terminal mới, chạy frontend cho admin bằng câu lệnh: "cd admin" -> "npm run dev"
+# Clone về máy
+git clone https://github.com/Thomashoang99/WebTapGym
+cd WebTapGym
+npm run install
+
+# Seed dữ liệu cho backend
+cd backend
+node seeds/master.js
+
+# Chạy backend:
+cd backend
+npm run dev
+
+# Chạy frontend user & admin:
+**User**: cd frontend && npm run dev
+**Admin**: cd admin && npm run dev
