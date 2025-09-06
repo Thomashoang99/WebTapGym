@@ -1,4 +1,5 @@
 # WebTapGym - Website cho người tập thể hình
+Phiên bản: v1.0
 
 ## Tech Stack
 **Frontend:** Vue 3, Pinia, Vue Router, Axios, Quill.js    
@@ -10,22 +11,33 @@
 - Quản lý hồ sơ cá nhân
 - Tìm kiếm và lọc bài tập, chương trình tập luyện, tin tức
 - Ghi chú tiến độ tập luyện theo từng chương trình
+- Mua & thanh toán chương trình tập luyện
 - Ghi chú chiều cao, cân nặng và BMI theo ngày
 
+### Cho admin:
+- Thêm, sửa, xóa bài tập, chương trình tập luyện, tin tức
+- Quản lý người dùng
+
 ## Hướng dẫn cài đặt
-# Clone về máy
+### Clone về máy
+```
 git clone https://github.com/Thomashoang99/WebTapGym
 cd WebTapGym
 npm run install
+```
 
-# Seed dữ liệu cho backend
-cd backend
-node seeds/master.js
+### Seed dữ liệu cho backend
+```
+cd backend  
+node seeds/master.js  
+```
 
-# Chạy backend:
-cd backend
-npm run dev
+### Chạy backend:
+```
+cd backend  
+npm run dev  
+```
 
-# Chạy frontend user & admin:
-**User**: cd frontend && npm run dev
-**Admin**: cd admin && npm run dev
+### Chạy frontend user & admin:  
+**User**: `cd frontend && npm run dev`  
+**Admin**: `cd admin && npm run dev`
